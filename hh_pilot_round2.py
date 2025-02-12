@@ -5,6 +5,7 @@ from random import shuffle
 import src.imageShower as imageShower
 
 from src.setup import ExperimentSetup
+from src.csvManager import CSVWriter
 setup = ExperimentSetup("config.yaml")
 setup.validate_paths()
 
@@ -17,9 +18,62 @@ kb = keyboard.Keyboard()
 # Define output file for button presses 
 output_file = os.path.join(setup.output_folder, setup.output_file)
 # Define column headers
-headers = ["Key", "ReactionTime"]
+headers = ["dyad_number", "trial_number","target_img" "selected_img","accuracy", "reaction_time"]
 # Prepare to record button presses
+os.makedirs("output", exist_ok=True)
+csv_writer = CSVWriter("output/data.csv", headers)
+
 button_data = []
+
+# Add dyad number
+dyad_nr_text = "Dyad number: "
+dyad_nr_stim = visual.TextStim(win, text=dyad_nr_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 0), wrapWidth=450)
+
+# Display prompt for dyad number input
+dyad_nr_stim.draw()
+win.flip()
+
+# Wait for the researcher to type the dyad number 
+dyad_number = ""
+while True:
+    keys = kb.getKeys(waitRelease=False, clear=True)
+    for key in keys:
+        if key.name == 'return' and dyad_number != "":  # Press 'Enter' to submit the input
+            break
+        elif key.name == 'backspace':  # Handle backspace to delete characters
+            dyad_number = dyad_number[:-1]
+        elif len(key.name) == 1:  # Add characters to dyad number
+            dyad_number += key.name
+    core.wait(0.01)
+
+# load background noises
+soc_noise = sound.Sound(setup.noise_soc_10)
+nonsoc_noise = sound.Sound(setup.noise_nonsoc_10)
+
+# Decide on social or nonsocial noise
+noise_text = "Noise type: "
+noise_stim = visual.TextStim(win, text=noise_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 0), wrapWidth=450)
+
+# Show the prompt
+noise_stim.draw()
+win.flip()
+
+# Wait for user input (pressing 's' for soc or 'n' for nonsoc)
+selected_noise = None
+while selected_noise not in ['s', 'n']:  # Wait for 's' or 'n' to be pressed
+    keys = kb.getKeys(waitRelease=False, clear=True)
+    for key in keys:
+        if key.name == 's':
+            selected_noise = 'soc'
+        elif key.name == 'n':
+            selected_noise = 'nonsoc'
+    core.wait(0.01)
+
+# Load the selected noise based on input
+if selected_noise == 'soc':
+    noise_to_play = soc_noise
+elif selected_noise == 'nonsoc':
+    noise_to_play = nonsoc_noise
 
 # create and display intro text 
 ronde2 = visual.TextStim(win, text="Ronde 2", color="white", height=50)
@@ -80,8 +134,14 @@ img_folder = setup.img_folder
 # img_text = "C:/Users/apalman/OneDrive - UvA/Desktop/museum_text.jpg"
 img_text = setup.img_text
 
+button_mapping = {"s":1, "w":2, "a":3, "d":4}
+
 # Iterate through each trial in the Excel sheet
-for trial in stim_file_data:
+for trial_number, trial in enumerate(stim_file_data, start=1):
+
+    # Play the sound
+    noise_to_play.play(loops=-1)  # Infinite loop for continuous playback
+
     # Display the description text
     # imageShower.show_image(img_text, win, size=(1000, 1000), pos=(0,-50), frame=False)
     image = visual.ImageStim(win, image=img_text, pos=(0,-50), size=(1000, 1000))
@@ -109,8 +169,9 @@ for trial in stim_file_data:
     size = (212, 212)
 
     # Shuffle positions to counterbalance
-    shuffle(positions)
-    imageShower.show_multiple_images([os.path.join(setup.img_folder, image) for image in images], win, positions, size=size, wait_time=0)
+    shuffle(images)
+    path_images = [os.path.join(setup.img_folder, image) for image in images]
+    imageShower.show_multiple_images(path_images, win, positions, size=size, wait_time=0)
 
     # Wait for a valid button press to continue
     print("Waiting for a valid button press")
@@ -121,15 +182,25 @@ for trial in stim_file_data:
             if key.name in setup.allowed_keys:
                 button_pressed = key.name
                 rt = key.rt
-                button_data.append([button_pressed, rt])
+                button_data.append([dyad_number, trial_number, trial['target_img'], button_pressed, rt])
                 break
         core.wait(0.01)  # Add a small delay
+        
+    # Stop the sound after the trial is done
+    noise_to_play.stop()
+
+    # Writing test data
+    selected_image = images[button_mapping[button_pressed-1]]
+    csv_writer.write_row([("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", 2.5)])
+
+noise_to_play.stop() # Stop the sound completely
+
 
 # # Write the data to a CSV file
-# with open(output_file, "w", newline="") as f:
-#     writer = csv.writer(f)
-#     writer.writerow(headers)  # Write headers
-#     writer.writerows(button_data)  # Write data rows
+with open(output_file, "w", newline="") as f:
+     writer = csv.writer(f)
+     writer.writerow(headers)  # Write headers
+     writer.writerows(button_data)  # Write data rows
     
 # # Close the window and exit
 # win.close()
@@ -141,5 +212,6 @@ for trial in stim_file_data:
 # # problems:
 # # 5 texts are slightly too long
 # # experiment ends weirdly, no csv file is created
-# # csv file should have the trial number and the order of target images (since it is randomized for each dyad)
-# # maybe randomization of target images can always be the same? then reference
+
+# # csv file: I think target image is always stim_1, so it's just about naming it well and giving the button press names
+# # James suggestion: give variable names (A,B,C,D) to positions and then see if button pressed corresponds

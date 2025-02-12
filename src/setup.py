@@ -28,6 +28,11 @@ class ExperimentSetup:
         self.img_text = os.path.join(self.img_folder_museum, self.config["files"]["img_text"])
         self.stimuli_excel = os.path.abspath(self.config["files"]["stimuli_excel"])
         self.img_folder = os.path.abspath(self.config["files"]["img_folder"])
+        self.noise_folder = os.path.abspath(self.config["files"]["noise_folder"])
+        self.noise_soc_10 = os.path.join(self.noise_folder, self.config["files"]["noise_soc_10"])
+        self.noise_soc_30 = os.path.join(self.noise_folder, self.config["files"]["noise_soc_30"])
+        self.noise_nonsoc_10 = os.path.join(self.noise_folder, self.config["files"]["pink_noise_10"])
+        self.noise_nonsoc_30 = os.path.join(self.noise_folder, self.config["files"]["pink_noise_30"])
 
         # Keyboard
         self.key_1 = self.config["input"]["key_1"]
@@ -55,6 +60,10 @@ class ExperimentSetup:
             self.img_4pics,
             self.img_text,
             self.stimuli_excel,
+            self.noise_soc_10,
+            self.noise_soc_30,
+            self.noise_nonsoc_10,
+            self.noise_nonsoc_30
         ]
 
         # Check if the root folder exists
