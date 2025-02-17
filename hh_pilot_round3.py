@@ -1,9 +1,20 @@
 from psychopy import visual, core, event, sound, data
 from psychopy.hardware import mouse, keyboard
 import os, random
+from src.OBSRecorder.src.obsRecording import OBSController
+from src.setup import ExperimentSetup
+import src.popUp as popUp
+import websocket
+
+setup = ExperimentSetup("config.yaml")
+setup.validate_paths()
 
 # A: 1 painting first, then 4 paintings
 # B: 4 paintings first, then 1 painting
+if not setup.no_obs:
+    obs = OBSController(setup.obs_host, setup.obs_port, setup.obs_password, popUp=popUp.PopUp())
+    obs.set_save_location(setup.output_folder)
+    obs.start_recording()
 
 # Start a timer
 timer = core.Clock()
@@ -22,11 +33,12 @@ button_data = []
 while timer.getTime() < 30:  # 300s = 5min
     keys = event.getKeys()  # Check for keypresses
     if "return" in keys:  # return = enter
-        break  
+        break
+    core.wait(0.01)
         
 #create window
-winA = visual.Window([800, 600], color="black", units="pix", screen=0, fullscr=False) # 1 painting (participant A)
-winB = visual.Window([800, 600], color="black", units="pix", screen=1, fullscr=False) # 4 paintings (participant B)
+winA = visual.Window([800, 600], color="black", units="pix", screen=2, fullscr=False) # 1 painting (participant A)
+winB = visual.Window([800, 600], color="black", units="pix", screen=3, fullscr=False) # 4 paintings (participant B)
 
 # create intro text 
 ronde3A = visual.TextStim(winA, text="Ronde 3", color="white", height=50)
@@ -216,6 +228,9 @@ for trial in stim_file_data:
                 rt = key.rt
                 button_data.append([button_pressed, rt])
                 break
+
+if not setup.no_obs:
+    obs.stop_recording()
 
 # Write the data to a CSV file
 with open(output_file, "w", newline="") as f:
