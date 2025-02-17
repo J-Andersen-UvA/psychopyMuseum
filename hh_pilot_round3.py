@@ -1,3 +1,8 @@
+"""
+Author: Anna Palmann
+
+Description: This script is the third round.
+"""
 from psychopy import visual, core, event, sound, data
 from psychopy.hardware import mouse, keyboard
 import os, random
