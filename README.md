@@ -29,6 +29,8 @@ This project implements a psychological experiment using the PsychoPy framework.
 1. Install the dependencies:
     ```python
     pip install psychopy
+    pip install obsws_python
+    pip install websocket-client
     ```
 2. Ensure the `config.yaml` file is set up with the correct paths and parameters.
 3. Place the stimuli images and Excel files in the appropriate folders.
