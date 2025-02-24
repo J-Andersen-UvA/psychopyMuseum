@@ -40,8 +40,13 @@ randomization:
   shuffle_images: true  # If false, keep a fixed order
 
 obs_host: 
-  target_host: "192.168.0.188" # ip address of my pc
+  target_host: "192.168.0.211" # ip address of my pc
   target_port: 4422
+
+# Of the location to send the files to after they are recorded
+receiver_machine:
+  ip: '192.168.0.180'
+  port: 4422
 
 obs_connection:
   no_obs: True
@@ -49,3 +54,4 @@ obs_connection:
   obs_port: 4457
   # Leave empty if no password is set
   obs_password:
+
