@@ -38,3 +38,6 @@ timing:
 
 randomization:
   shuffle_images: true  # If false, keep a fixed order
+
+obs: 
+  obs_computer_address: "192.168.0.188" # ip address of my pc
