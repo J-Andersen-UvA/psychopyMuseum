@@ -53,6 +53,12 @@ class ExperimentSetup:
         self.stim_folder = os.path.abspath(self.config["files"]["stimuli_folder"])
         self.stimuli_excel = os.path.join(self.stim_folder, self.config["files"]["stimuli_excel"])
 
+        # OBS connection setup
+        self.no_obs = self.config["obs_connection"]["no_obs"]
+        self.obs_host = self.config["obs_connection"]["obs_host"]
+        self.obs_port = self.config["obs_connection"]["obs_port"]
+        self.obs_password = self.config["obs_connection"].get("obs_password", "")
+
 # Counterbalance trial order by shuffling
     def validate_paths(self):
         # Ensure required files and directories exist

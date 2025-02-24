@@ -20,8 +20,8 @@ files:
   stimuli_folder: "stim_folder/"
   stimuli_excel: "stimuli_round2.xlsx"
   noise_folder: "noise_folder/"
-  noise_soc_10: "noise_soc_10"
-  noise_soc_30: "noise_soc_30"
+  noise_soc_10: "background_noise_10"
+  noise_soc_30: "background_noise_30"
   pink_noise_10: "pink_noise_10"
   pink_noise_30: "pink_noise_30"
 
@@ -39,5 +39,13 @@ timing:
 randomization:
   shuffle_images: true  # If false, keep a fixed order
 
-obs: 
-  obs_computer_address: "192.168.0.188" # ip address of my pc
+obs_host: 
+  target_host: "192.168.0.188" # ip address of my pc
+  target_port: 4422
+
+obs_connection:
+  no_obs: True
+  obs_host: 'localhost'
+  obs_port: 4457
+  # Leave empty if no password is set
+  obs_password:
