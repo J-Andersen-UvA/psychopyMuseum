@@ -47,8 +47,8 @@ while True:
     core.wait(0.01)
 
 # load background noises
-soc_noise = sound.Sound(setup.noise_soc_10)
-nonsoc_noise = sound.Sound(setup.noise_nonsoc_10)
+soc_noise = sound.Sound(noise_soc_10)
+nonsoc_noise = sound.Sound(noise_nonsoc_10)
 
 # Decide on social or nonsocial noise
 noise_text = "Noise type: "
@@ -168,13 +168,29 @@ for trial_number, trial in enumerate(stim_file_data, start=1):
     positions = [(-123, 146), (125, 146), (-123, -104), (125, -104)]
     size = (212, 212)
 
-    # Shuffle positions to counterbalance
+  # Shuffle positions to counterbalance
     shuffle(images)
+
+  # get path of images
     path_images = [os.path.join(setup.img_folder, image) for image in images]
+
+  # show shuffled images
     imageShower.show_multiple_images(path_images, win, positions, size=size, wait_time=0)
 
+ # Define fixed number positions at bottom-right of image
+    number_offsets = (80, -80) 
+
+# Draw fixed numbers (1-4) in the same positions, regardless of shuffled images
+    for i, pos in enumerate(positions):
+        number_stim = visual.TextStim(win, text=str(i + 1), pos=(pos[0] + number_offsets[0], pos[1] + number_offsets[1]), 
+                                  color='white', height=30)
+        number_stim.draw()
+
+# Refresh screen to show images and numbers
+    win.flip()
+
+
     # Wait for a valid button press to continue
-    print("Waiting for a valid button press")
     button_pressed = None
     while button_pressed not in setup.allowed_keys:
         keys = kb.getKeys(waitRelease=False, clear=True)
