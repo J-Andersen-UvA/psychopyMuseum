@@ -11,7 +11,11 @@ setup = ExperimentSetup("config.yaml")
 setup.validate_paths()
 
 # create window
-win = visual.Window(setup.window_size, color=setup.window_color, units=setup.window_units, fullscr=setup.fullscreen)
+win = visual.Window(
+    setup.window_size, 
+    color=setup.window_color, 
+    units=setup.window_units, 
+    fullscr=setup.fullscreen)
 
 # set up keyboard for the button box
 kb = keyboard.Keyboard()
@@ -31,7 +35,7 @@ dyad_nr_text = "Dyad number: "
 dyad_number = ""
 
 #display text
-dyad_nr_stim = visual.TextStim(win, text=dyad_nr_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 0), wrapWidth=450)
+dyad_nr_stim = visual.TextStim(win, text=dyad_nr_text, color="#F5F5DC", colorSpace='hex', height=40, pos=(0, 0), wrapWidth=450)
 
 # Wait for the researcher to type the dyad number 
 while True:
@@ -64,7 +68,7 @@ noise_text = "Noise type: "
 selected_noise = ""
 
 #display text
-noise_stim = visual.TextStim(win, text=noise_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 0), wrapWidth=450)
+noise_stim = visual.TextStim(win, text=noise_text, color="#F5F5DC", colorSpace='hex', height=40, pos=(0, 0), wrapWidth=450)
 
 while True:
 
@@ -110,7 +114,7 @@ while timer.getTime() < 5:  # 5s
     core.wait(0.01)  # Add a small delay
 
 # create and display instructions
-instr2 = visual.TextStim(win, text="In deze opdracht zien jullie korte beschrijvingen van abstracte schilderijen op het scherm. \n\nStel jullie voor dat jullie bij een museumbezoek zijn en de gids beschrijft een schilderij aan jullie. \n\nDaarna zien jullie vier verschillende schilderijen op het scherm. Het is jullie taak om samen te overleggen en te beslissen welk van de vier schilderijen de gids heeft beschreven. \n\nAls jullie dat hebben besloten, gebruiken jullie het knoppenvak om een schilderij te selecteren. Dan verschijnt de volgende beschrijving.", color="white", height=27, wrapWidth=600)
+instr2 = visual.TextStim(win, text="In deze opdracht zien jullie korte beschrijvingen van abstracte schilderijen op het scherm. \n\nStel jullie voor dat jullie bij een museumbezoek zijn en de gids beschrijft een schilderij aan jullie. \n\nDaarna zien jullie vier verschillende schilderijen op het scherm. Het is jullie taak om samen te overleggen en te beslissen welk van de vier schilderijen de gids heeft beschreven. \n\nAls jullie dat hebben besloten, gebruiken jullie het knoppenvak om een schilderij te selecteren. Dan verschijnt de volgende beschrijving.", color="white", height=30, wrapWidth=600)
 
 # Start a timer
 timer = core.Clock()
@@ -124,7 +128,7 @@ while timer.getTime() < 40:  # 40s
 imageShower.show_image(setup.img_4pics, win, size=(700, 700))
 
 # zoom in intro image
-imageShower.show_image(setup.img_4pics, win, pos=(0,-50), size=(1000, 1000))
+imageShower.show_image(setup.img_4pics, win, pos=(0,-70), size=(1100, 1100))
 
 # stimulus file
 # stim_file = "C:/Users/apalman/OneDrive - UvA/Desktop/stimuli_round2.xlsx"
@@ -209,7 +213,7 @@ for trial_number, trial in enumerate(stim_file_data, start=1):
             if key.name in button_mapping:
                 button_pressed = key.name
                 rt = key.rt
-                button_data.append([dyad_number, trial_number, trial['target_img'], button_pressed, rt])
+                button_data.append([dyad_number, trial_number, trial, button_pressed, rt])
                 break
         core.wait(0.01)  # Add a small delay
         

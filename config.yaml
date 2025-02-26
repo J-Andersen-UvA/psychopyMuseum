@@ -7,7 +7,7 @@ window:
   size: [800, 600]
   color: "black"
   units: "pix"
-  fullscreen: false
+  fullscreen: True
 
 files:
   output_folder: "output/"
