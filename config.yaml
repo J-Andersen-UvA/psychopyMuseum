@@ -20,10 +20,10 @@ files:
   stimuli_folder: "stim_folder/"
   stimuli_excel: "stimuli_round2.xlsx"
   noise_folder: "noise_folder/"
-  noise_soc_10: "background_noise_10"
-  noise_soc_30: "background_noise_30"
-  pink_noise_10: "pink_noise_10"
-  pink_noise_30: "pink_noise_30"
+  noise_soc_10: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/background_noise_10"
+  noise_soc_30: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/background_noise_30"
+  pink_noise_10: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/pink_noise_10"
+  pink_noise_30: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/pink_noise_30"
 
 input:
   key_1: "a"
