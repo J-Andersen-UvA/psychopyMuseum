@@ -62,6 +62,15 @@ def show_multiple_images(image_locations, window, positions, size=(212, 212), wa
     while timer.getTime() < wait_time:
         core.wait(0.01)
 
+def show_multiple_images(show_tags=True):
+    if show_tags:
+        number_tags = ["1", "2", "3", "4"]  # Define number tags (always in the same positions)
+        number_pos = [(89, 328), (337, 328), (89, 78), (337, 78)]
+        for i in range(4):
+            number_text = visual.TextStim(win, text=number_tags[i], color="#F5F5DC", height=30, pos=number_pos)
+            number_text.draw()  # Draw on top of images
+
 def update_window(window, content):
     content.draw()
     window.flip()
+

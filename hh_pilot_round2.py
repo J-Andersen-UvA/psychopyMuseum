@@ -189,15 +189,7 @@ for trial_number, trial in enumerate(stim_file_data, start=1):
     rt_clock = core.Clock()
 
   # show shuffled images
-    imageShower.show_multiple_images(path_images, win, positions, size=size, wait_time=0)
-
-    # Define number tags (always in the same positions)
-    number_tags = ["1", "2", "3", "4"]
-    number_offsets = (70, -70)  # Offset for bottom-right positioning
-    for i in range(4):
-        text_stim = visual.TextStim(win, text=number_tags[i], color="#F5F5DC", height=30,
-                                    pos=(positions[i][0] + number_offsets[0], positions[i][1] + number_offsets[1]))
-        text_stim.draw()  # Draw on top of images
+    imageShower.show_multiple_images(path_images, win, positions, size=size, wait_time=0, show_tags=True)
 
   # Refresh screen to show images and numbers
     win.flip()
