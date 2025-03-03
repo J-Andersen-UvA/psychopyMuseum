@@ -6,7 +6,8 @@ images:
   img1_background: null
   text_background: "img_folder/museumImages/museum_text.jpeg"
 
-
 stimuli:
     stim_file: "stim_folder/stimuli_round2.xlsx"
+
+role_switch: False
 

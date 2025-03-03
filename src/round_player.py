@@ -9,6 +9,18 @@ import general_setup as gs
 import round_setup as rs
 setup = gs.ExperimentSetup()
 
+def roleSwitch():
+    role_switched = False
+    # Check if it's time to switch roles 
+    if main_timer.getTime() > 30 and not role_switched:
+        role_switched = True  # Ensure roles are only switched once
+        visual.TextStim(winA, text=round_setup.switch, color="white", height=30).draw()
+        visual.TextStim(winB, text=round_setup.switch, color="white", height=30).draw()
+        winA.flip()
+        winB.flip()
+        core.wait(5) # wait for 5s
+        winA, winB = winB, winA  # Swap the windows
+
 def waitOrButton(wait_time=600, button="return"):
     """
     Waits for a certain time (in seconds) or until a button (enter) is pressed
@@ -172,7 +184,7 @@ round_setup = rs.RoundSetup(round_number)
 visual.TextStim(winA,text=round_setup.instr)
 
 # Start a timer
-timer = core.Clock()
+main_timer = core.Clock()
 
 # play prompts (only for for round 1)
 for prompt in round_setup.prompts:
@@ -195,7 +207,11 @@ imageShower.show_image(round_setup.img4_background, winB, pos=(0,-70), size=(110
 stim_file_data = data.importConditions(stim_file) # import Excel sheet data
 random.shuffle(stim_file_data)
 
-
+# Iterate through each trial in the Excel sheet
+if 
+for trial in stim_file_data:
+    roleSwitch()
+    
 # Iterate through each trial in the Excel sheet
 for trial_number, trial in enumerate(stim_file_data, start=1):
 
