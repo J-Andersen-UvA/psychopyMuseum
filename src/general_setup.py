@@ -4,6 +4,9 @@ from src import popUp
 popUp = popUp.PopUp()
 
 class ExperimentSetup:
+    """
+    This is a setup class to fetch the default variables from.
+    """
     def __init__(self, config_file="config.yaml"):
         # Load the YAML configuration file
         with open(config_file, 'r') as f:
@@ -20,6 +23,10 @@ class ExperimentSetup:
         self.window_units = self.config["window"]["units"]
         self.fullscreen = self.config["window"]["fullscreen"]
 
+        # windows assigned to screens
+        self.screenA = self.config["winA"]
+        self.screenB = self.config["winB"]
+
         # File paths
         self.output_folder = os.path.abspath(self.config["files"]["output_folder"])
         self.output_file = os.path.abspath(self.config["files"]["output_file"])
@@ -28,11 +35,9 @@ class ExperimentSetup:
         self.img_text = os.path.join(self.img_folder_museum, self.config["files"]["img_text"])
         self.stimuli_excel = os.path.abspath(self.config["files"]["stimuli_excel"])
         self.img_folder = os.path.abspath(self.config["files"]["img_folder"])
-        self.noise_folder = os.path.abspath(self.config["files"]["noise_folder"])
-        self.noise_soc_10 = os.path.join(self.noise_folder, self.config["files"]["noise_soc_10"])
-        self.noise_soc_30 = os.path.join(self.noise_folder, self.config["files"]["noise_soc_30"])
-        self.noise_nonsoc_10 = os.path.join(self.noise_folder, self.config["files"]["pink_noise_10"])
-        self.noise_nonsoc_30 = os.path.join(self.noise_folder, self.config["files"]["pink_noise_30"])
+
+        self.noise_soc = self.config["files"]["noise_soc"]
+        self.noise_nonsoc = self.config["files"]["noise_nonsoc"]
 
         # Keyboard
         self.key_1 = self.config["input"]["key_1"]
@@ -46,29 +51,21 @@ class ExperimentSetup:
         self.instructions_duration = self.config["timing"]["instructions_duration"]
         self.description_duration = self.config["timing"]["description_duration"]
 
-        # Randomization
-        self.shuffle_images = self.config["randomization"]["shuffle_images"]
-
-        # stimulus file
-        self.stim_folder = os.path.abspath(self.config["files"]["stimuli_folder"])
-        self.stimuli_excel = os.path.join(self.stim_folder, self.config["files"]["stimuli_excel"])
-
         # OBS connection setup
         self.no_obs = self.config["obs_connection"]["no_obs"]
         self.obs_host = self.config["obs_connection"]["obs_host"]
         self.obs_port = self.config["obs_connection"]["obs_port"]
         self.obs_password = self.config["obs_connection"].get("obs_password", "")
 
-# Counterbalance trial order by shuffling
     def validate_paths(self):
-        # Ensure required files and directories exist
+        """
+        Ensure required files and directories exist
+        """
         files_to_check = [
             self.img_4pics,
             self.img_text,
             self.stimuli_excel,
-            self.noise_soc_10,
             self.noise_soc_30,
-            self.noise_nonsoc_10,
             self.noise_nonsoc_30
         ]
 

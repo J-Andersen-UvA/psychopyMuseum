@@ -1,6 +1,6 @@
 experiment:
   name: "PsychoPy Experiment"
-  author: "Your Colleague's Name"
+  author: "Anna"
   description: "Museum painting selection task"
 
 window:
@@ -9,21 +9,14 @@ window:
   units: "pix"
   fullscreen: True
 
+# define screens for windows
+winA: 2
+winB: 3
+
 files:
   output_folder: "output/"
-  # output_folder: "C:/Users/apalman/OneDrive - UvA/Desktop/"
-  output_file: "output_round2.csv"
-  img_folder: "img_folder/artworks/"
-  img_folder_museum: "img_folder/museumImages/"
-  img_4pics: "museum_4pics.jpeg"
-  img_text: "museum_text.jpeg"
-  stimuli_folder: "stim_folder/"
-  stimuli_excel: "stimuli_round2.xlsx"
-  noise_folder: "noise_folder/"
-  noise_soc_10: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/background_noise_10"
-  noise_soc_30: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/background_noise_30"
-  pink_noise_10: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/pink_noise_10"
-  pink_noise_30: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/pink_noise_30"
+  noise_soc: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/background_noise_30"
+  noise_nonsoc: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/pink_noise_30"
 
 input:
   key_1: "a"
@@ -33,11 +26,8 @@ input:
 
 timing:
   intro_duration: 5
-  instructions_duration: 60
+  instructions_duration: 30
   description_duration: 5
-
-randomization:
-  shuffle_images: true  # If false, keep a fixed order
 
 obs_host: 
   target_host: "192.168.0.211" # ip address of my pc

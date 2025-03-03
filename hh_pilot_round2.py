@@ -1,11 +1,5 @@
-from psychopy import visual, core, event, sound, data
-from psychopy.hardware import mouse, keyboard
-import os, random
-from random import shuffle
-import src.imageShower as imageShower
-import yaml
-
-from src.setup import ExperimentSetup
+import round_player
+from general_setup import ExperimentSetup
 from src.csvManager import CSVWriter
 setup = ExperimentSetup("config.yaml")
 setup.validate_paths()
@@ -94,7 +88,7 @@ while True:
 #    noise_to_play = nonsoc_noise
 
 # create and display intro text 
-ronde2 = visual.TextStim(win, text="Ronde 2", color="white", height=50)
+ronde2 = visual.TextStim(win, text="Ronde 2", color="white", height=50) # here now intro
 ronde2.draw()
 win.flip()  # Update the window
 
@@ -103,8 +97,7 @@ kb.clearEvents()  # Clear keyboard buffer
 # Start a timer
 timer = core.Clock()
 
-# Wait for 1 minute or until Enter is pressed
-print("Waiting for 5 seconds")
+# Wait for 5s or until Enter is pressed - I don't think key presses don't work
 while timer.getTime() < 5:  # 5s
     imageShower.update_window(win, ronde2)
 
@@ -151,7 +144,7 @@ button_mapping = {"s":1, "w":2, "a":3, "d":4}
 for trial_number, trial in enumerate(stim_file_data, start=1):
 
     # Play the sound
-    #noise_to_play.play(loops=-1)  # Infinite loop for continuous playback
+    noise_to_play.play(loops=-1)  # Infinite loop for continuous playback
 
     # Display the description text
     # imageShower.show_image(img_text, win, size=(1000, 1000), pos=(0,-50), frame=False)

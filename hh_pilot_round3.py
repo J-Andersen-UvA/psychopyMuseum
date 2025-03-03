@@ -7,7 +7,7 @@ from psychopy import visual, core, event, sound, data
 from psychopy.hardware import mouse, keyboard
 import os, random
 from src.OBSRecorder.src.obsRecording import OBSController
-from src.setup import ExperimentSetup
+from general_setup import ExperimentSetup
 import src.popUp as popUp
 import websocket
 
