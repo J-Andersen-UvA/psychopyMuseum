@@ -8,7 +8,8 @@ prompts:
     prompt4: "Onderwerp 4: \n\nPlan een festival waar jullie allebei van zouden genieten"
 
 images:
-  intro_image: null
-  background_image: null
+  img4_background: null
+  img1_background: null
+  text_background: null
 
 stim_file: null

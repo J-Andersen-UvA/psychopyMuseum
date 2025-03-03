@@ -1,6 +1,6 @@
 from psychopy import visual, core, event, sound, data
 import csvManager
-from psychopy.hardware import mouse, keyboard
+from psychopy.hardware import keyboard, mouse 
 import os, random
 from random import shuffle
 import src.imageShower as imageShower
@@ -25,7 +25,6 @@ def waitOrButton(wait_time=600, button="return"):
         keys = event.getKeys()  # Check for keypresses
         if button in keys:  # return = enter
             break 
-
 
 
 # create windows
@@ -128,7 +127,7 @@ csv_writer = csvManager.CSVWriter(output_file + ".csv", headers)
 noise_text = "Noise type: "
 selected_noise = ""
 
-#display text
+#display noise text
 noise_stim = visual.TextStim(winA, text=noise_text, 
                              color="#F5F5DC", 
                              colorSpace='hex', 
@@ -149,6 +148,7 @@ while True:
     winA.flip()
     winB.flip()
 
+    # select noise dependent on input
     keys = kb.getKeys()
     for key in keys:
         if key.name == 's':
@@ -160,8 +160,6 @@ while True:
     if 's' in [key.name for key in keys] or 'n' in [key.name for key in keys]:
         break
     core.wait(0.01)
-
-noise.play()
 
 # create intro text for rounds 
 intro = visual.TextStim(winA, text="Ronde " + str(round_number), color="white", height=50)
@@ -176,7 +174,7 @@ visual.TextStim(winA,text=round_setup.instr)
 # Start a timer
 timer = core.Clock()
 
-# play prompts for round 1
+# play prompts (only for for round 1)
 for prompt in round_setup.prompts:
     visual.TextStim(winA, text=prompt, color="white", height=40).draw
     visual.TextStim(winB, text=prompt, color="white", height=40).draw
@@ -184,35 +182,32 @@ for prompt in round_setup.prompts:
     winA.flip()  
     winB.flip()  
 
-# load images
-if round_setup.intro_image:
+ # load background image
+imageShower.show_image(round_setup.img4_background, winA, size=(700, 700))
+imageShower.show_image(round_setup.img4_background, winB, size=(700, 700))
 
-    background_img = visual.ImageStim(winA, image=setup.img_4pics, pos=(0,-50), size=(1000, 1000))
-    background_img = visual.ImageStim(winB, image=setup.img_4pics, pos=(0,-50), size=(1000, 1000))
-
-
- # background image
-imageShower.show_image(setup.img_4pics, winA, size=(700, 700))
-# zoom in intro image
-imageShower.show_image(setup.img_4pics, winA, pos=(0,-70), size=(1100, 1100))
+# zoom in background image
+imageShower.show_image(round_setup.img4_background, winA, pos=(0,-70), size=(1100, 1100))
+imageShower.show_image(round_setup.img4_background, winB, pos=(0,-70), size=(1100, 1100))
 
 
-# Counterbalance trial order by shuffling
-stim_file_data = data.importConditions(stim_file)
+# Counterbalance trial order from Excel sheet by shuffling
+stim_file_data = data.importConditions(stim_file) # import Excel sheet data
 random.shuffle(stim_file_data)
 
 
 # Iterate through each trial in the Excel sheet
 for trial_number, trial in enumerate(stim_file_data, start=1):
 
-    # Play the sound
-    noise_to_play.play(loops=-1)  # Infinite loop for continuous playback
+    # Play the background noise
+    noise.play(loops=-1)  # Infinite loop for continuous playback
 
     # Display the description text
-    # imageShower.show_image(img_text, win, size=(1000, 1000), pos=(0,-50), frame=False)
+    imageShower.show_image(img_text, win, size=(1000, 1000), pos=(0,-50), frame=False)
+
     image = visual.ImageStim(win, image=img_text, pos=(0,-50), size=(1000, 1000))
-    desc_text = trial['description_text']  # Assuming a 'Description' column in the Excel file
-    desc_stim = visual.TextStim(win, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450)
+    desc_text = trial['description_text']  
+    desc_stim = visual.TextStim(win, text=desc_text, co;lor="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450)
     
     image.draw()
     desc_stim.draw()
@@ -220,12 +215,11 @@ for trial_number, trial in enumerate(stim_file_data, start=1):
 
     # Start a timer
     timer = core.Clock()
-
     while timer.getTime() < 5:
         core.wait(0.01)
 
     # Load img4 as the background
-    # imageShower.show_image(setup.img_4pics, win, pos=(0,-50), size=(1000, 1000))
+    imageShower.show_image(setup.img_4pics, win, pos=(0,-50), size=(1000, 1000))
     background = visual.ImageStim(win, image=setup.img_4pics, pos=(0,-50), size=(1000, 1000))
     background.draw()
     
@@ -264,9 +258,16 @@ for trial_number, trial in enumerate(stim_file_data, start=1):
                 break
         core.wait(0.01)  # Add a small delay
         
-    # Stop the sound after the trial is done
-    #noise_to_play.stop()
+    # Stop the noise after the trial is done
+    noise.stop()
 
-    # Writing test data
+    # Write test data
     selected_image = images[button_mapping[button_pressed-1]]
     csv_writer.write_row([("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", rt)])
+
+# Close windows
+winA.close()
+winB.close()
+
+# Exit experiment
+core.quit()

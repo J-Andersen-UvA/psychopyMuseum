@@ -62,11 +62,8 @@ class ExperimentSetup:
         Ensure required files and directories exist
         """
         files_to_check = [
-            self.img_4pics,
-            self.img_text,
-            self.stimuli_excel,
-            self.noise_soc_30,
-            self.noise_nonsoc_30
+            self.noise_soc,
+            self.noise_nonsoc
         ]
 
         # Check if the root folder exists

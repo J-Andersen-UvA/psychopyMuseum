@@ -12,21 +12,22 @@ class RoundSetup:
                         self.prompts = self.round.get("prompts")
 
                         # Load in all images
-                        self.intro_image = self.round["images"]["intro_image"]
-
+                        self.img4_background = self.round["images"]["img4_background"]
+                        self.img1_background = self.round["images"]["img1_background"]
+                        self.text_background = self.round["images"]["text_background"]
+  
                         # Load in the stimulus files
-                        self.stimuli_excel = self.round["stim_file"]
+                        self.stim_file = self.round["stim_file"]
 
         def validate_paths(self):
         """
         Ensure required files and directories exist
         """
         files_to_check = [
-            self.img_4pics,
-            self.img_text,
-            self.stimuli_excel,
-            self.noise_soc_30,
-            self.noise_nonsoc_30
+            self.4image_background,
+            self.1image_background,
+            self.text_background,
+            self.stim_file,
         ]
 
         # Check if the root folder exists
