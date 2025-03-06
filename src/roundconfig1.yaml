@@ -1,10 +1,10 @@
 texts:
     instr: "In deze opdracht zien jullie een gespreksonderwerp op het scherm. Gebruik deze als inspiratie voor een gesprek en praat er vrijuit over. Als jullie het gevoel hebben dat er niets meer is om over te praten, druk dan op een knop op de buttonbox en er verschijnen nieuwe gespreksonderwerpen."
     switch: "De rollen zijn nu omgedraaid"
-    
+
 prompts:
     prompt1: "Onderwerp 1: \n\nOntwerp een vijfgangendiner bestaande uit gerechten en drankjes die jullie allebei niet lekker vinden"
-    prompt2: "Onderwerp 2: \n\nBespreek en wordt het eens met elkaar over welke twee verschillende superkrachten jullie allebei willen hebben"
+    prompt2: "Onderwerp 2: \n\nBespreek en word het eens over welke twee verschillende superkrachten jullie allebei willen hebben"
     prompt3: "Onderwerp 3: \n\nPlan een vakantie waar jullie allebei van zouden genieten"
     prompt4: "Onderwerp 4: \n\nPlan een festival waar jullie allebei van zouden genieten"
 

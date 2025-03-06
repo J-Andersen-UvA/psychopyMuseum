@@ -3,7 +3,7 @@ import csvManager
 from psychopy.hardware import keyboard, mouse 
 import os, random
 from random import shuffle
-import src.imageShower as imageShower
+import imageShower as imageShower
 import yaml
 import general_setup as gs
 import round_setup as rs
@@ -208,7 +208,6 @@ stim_file_data = data.importConditions(stim_file) # import Excel sheet data
 random.shuffle(stim_file_data)
 
 # Iterate through each trial in the Excel sheet
-if 
 for trial in stim_file_data:
     roleSwitch()
     
@@ -223,7 +222,7 @@ for trial_number, trial in enumerate(stim_file_data, start=1):
 
     image = visual.ImageStim(win, image=img_text, pos=(0,-50), size=(1000, 1000))
     desc_text = trial['description_text']  
-    desc_stim = visual.TextStim(win, text=desc_text, co;lor="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450)
+    desc_stim = visual.TextStim(win, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450)
     
     image.draw()
     desc_stim.draw()

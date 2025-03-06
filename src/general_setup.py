@@ -1,6 +1,6 @@
 import yaml
 import os
-from src import popUp
+import popUp
 popUp = popUp.PopUp()
 
 class ExperimentSetup:

@@ -2,34 +2,37 @@ import yaml
 import os
 
 class RoundSetup:
-        def __init__(self, round_number=1):
-                # Load the YAML configuration file
-                with open("roundconfig" + round_number + ".yaml", 'r') as f:
-                        self.round = yaml.safe_load(f)
+    def __init__(self, round_number=1):
+        # Load the YAML configuration file
+        with open("roundconfig" + str(round_number) + ".yaml", 'r') as f:
+            self.round = yaml.safe_load(f)
 
-                        # All texts to be displayed
-                        self.instr = self.round["texts"]["instr"]
-                        self.switch = self.round["texts"]["switch"]
-                        self.prompts = self.round.get("prompts")
+            # All texts to be displayed
+            self.instr = self.round["texts"]["instr"]
+            self.switch = self.round["texts"]["switch"]
+            self.prompts = self.round.get("prompts")
 
-                        # Load in all images
-                        self.img4_background = self.round["images"]["img4_background"]
-                        self.img1_background = self.round["images"]["img1_background"]
-                        self.text_background = self.round["images"]["text_background"]
-  
-                        # Load in the stimulus files
-                        self.stim_file = self.round["stim_file"]
+            # Load in all images
+            self.img4_background = self.round["images"]["img4_background"]
+            self.img1_background = self.round["images"]["img1_background"]
+            self.text_background = self.round["images"]["text_background"]
 
-        def validate_paths(self):
-        """
-        Ensure required files and directories exist
-        """
+            # Load in the stimulus files
+            self.stim_file = self.round["stim_file"]
+
+    def validate_paths(self):
         files_to_check = [
-            self.4image_background,
-            self.1image_background,
+            self.img4_background,
+            self.img1_background,
             self.text_background,
             self.stim_file,
         ]
+        
+        # Loop through files to check if they exist
+        for file in files_to_check:
+            if not os.path.isfile(file):
+                print(f"Warning: The file {file} does not exist.")
+
 
         # Check if the root folder exists
         if not os.path.exists(self.output_folder):
