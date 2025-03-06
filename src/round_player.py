@@ -38,13 +38,12 @@ def waitOrButton(wait_time=600, button="return"):
         if button in keys:  # return = enter
             break 
 
-
 # create windows
 winA = visual.Window(
     setup.window_size, 
     color=setup.window_color, 
     units=setup.window_units, 
-    fulscr=setup.fullscreen,
+    fullscr=setup.fullscreen,
     monitor=setup.screenA)
 
 winB = visual.Window(
@@ -207,10 +206,7 @@ imageShower.show_image(round_setup.img4_background, winB, pos=(0,-70), size=(110
 stim_file_data = data.importConditions(stim_file) # import Excel sheet data
 random.shuffle(stim_file_data)
 
-# Iterate through each trial in the Excel sheet
-for trial in stim_file_data:
-    roleSwitch()
-    
+
 # Iterate through each trial in the Excel sheet
 for trial_number, trial in enumerate(stim_file_data, start=1):
 
@@ -279,6 +275,9 @@ for trial_number, trial in enumerate(stim_file_data, start=1):
     # Write test data
     selected_image = images[button_mapping[button_pressed-1]]
     csv_writer.write_row([("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", rt)])
+
+# Iterate through each trial in the Excel sheet
+roleSwitch()
 
 # Close windows
 winA.close()

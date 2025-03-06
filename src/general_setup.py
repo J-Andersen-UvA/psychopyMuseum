@@ -29,13 +29,6 @@ class ExperimentSetup:
 
         # File paths
         self.output_folder = os.path.abspath(self.config["files"]["output_folder"])
-        self.output_file = os.path.abspath(self.config["files"]["output_file"])
-        self.img_folder_museum = os.path.abspath(self.config["files"]["img_folder_museum"])
-        self.img_4pics = os.path.join(self.img_folder_museum, self.config["files"]["img_4pics"])
-        self.img_text = os.path.join(self.img_folder_museum, self.config["files"]["img_text"])
-        self.stimuli_excel = os.path.abspath(self.config["files"]["stimuli_excel"])
-        self.img_folder = os.path.abspath(self.config["files"]["img_folder"])
-
         self.noise_soc = self.config["files"]["noise_soc"]
         self.noise_nonsoc = self.config["files"]["noise_nonsoc"]
 
