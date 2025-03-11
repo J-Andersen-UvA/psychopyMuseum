@@ -1,5 +1,8 @@
 import yaml
 import os
+import popUp
+from psychopy import data
+from random import shuffle
 
 class RoundSetup:
     def __init__(self, round_number=1):
@@ -18,7 +21,15 @@ class RoundSetup:
             self.text_background = self.round["images"]["text_background"]
 
             # Load in the stimulus files
-            self.stim_file = self.round["stim_file"]
+            self.stims = self.stimulus_setup(self.round["stim_file"])
+
+            self.role_switch = self.round.get("role_switch")
+    
+    def stimulus_setup(self, file_path):
+        stim_file_data = data.importConditions(file_path) # import Excel sheet data
+        shuffle(stim_file_data)
+        return stim_file_data
+
 
     def validate_paths(self):
         files_to_check = [

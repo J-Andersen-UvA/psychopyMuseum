@@ -7,11 +7,11 @@ window:
   size: [800, 600]
   color: "black"
   units: "pix"
-  fullscreen: True
+  fullscreen: False
 
 # define screens for windows
-winA: 2
-winB: 3
+winA: 0
+winB: 0
 
 files:
   output_folder: "output/"

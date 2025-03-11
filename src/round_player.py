@@ -1,6 +1,7 @@
-from psychopy import visual, core, event, sound, data
+from psychopy import visual, core, event, sound, data, monitors 
 import csvManager
-from psychopy.hardware import keyboard, mouse 
+from psychopy.hardware import keyboard as kb
+from psychopy.hardware import mouse as mouse
 import os, random
 from random import shuffle
 import imageShower as imageShower
@@ -9,10 +10,8 @@ import general_setup as gs
 import round_setup as rs
 setup = gs.ExperimentSetup()
 
-def roleSwitch():
-    role_switched = False
-    # Check if it's time to switch roles 
-    if main_timer.getTime() > 30 and not role_switched:
+def roleSwitch(enable):
+    if main_timer.getTime() > 30 and enable:     # Check if it's time to switch roles 
         role_switched = True  # Ensure roles are only switched once
         visual.TextStim(winA, text=round_setup.switch, color="white", height=30).draw()
         visual.TextStim(winB, text=round_setup.switch, color="white", height=30).draw()
@@ -25,15 +24,9 @@ def waitOrButton(wait_time=600, button="return"):
     """
     Waits for a certain time (in seconds) or until a button (enter) is pressed
     """
-    waiting = True
-    while waiting:
-        keys = kb.getKeys(waitRelease=False, clear=True)
-        for key in keys:
-            if key.name in setup.allowed_keys:
-                waiting = False  
-                break
+    buttonTime = core.Clock()
 
-    while timer.getTime() < wait_time:  # 10 minutes (600s)
+    while buttonTime.getTime() < wait_time:  # 10 minutes (600s)
         keys = event.getKeys()  # Check for keypresses
         if button in keys:  # return = enter
             break 
@@ -181,6 +174,7 @@ round_setup = rs.RoundSetup(round_number)
 
 # create instruction text 
 visual.TextStim(winA,text=round_setup.instr)
+visual.TextStim(winB,text=round_setup.instr)
 
 # Start a timer
 main_timer = core.Clock()
@@ -202,82 +196,70 @@ imageShower.show_image(round_setup.img4_background, winA, pos=(0,-70), size=(110
 imageShower.show_image(round_setup.img4_background, winB, pos=(0,-70), size=(1100, 1100))
 
 
-# Counterbalance trial order from Excel sheet by shuffling
-stim_file_data = data.importConditions(stim_file) # import Excel sheet data
-random.shuffle(stim_file_data)
-
+ # Create a response clock
+rt_clock = core.Clock()
 
 # Iterate through each trial in the Excel sheet
-for trial_number, trial in enumerate(stim_file_data, start=1):
+def go_trial():
+    for trial_number, trial in enumerate(setup.stims):
 
-    # Play the background noise
-    noise.play(loops=-1)  # Infinite loop for continuous playback
+        # Play the background noise
+        noise.play(loops=-1)  # Infinite loop for continuous playback
 
-    # Display the description text
-    imageShower.show_image(img_text, win, size=(1000, 1000), pos=(0,-50), frame=False)
-
-    image = visual.ImageStim(win, image=img_text, pos=(0,-50), size=(1000, 1000))
-    desc_text = trial['description_text']  
-    desc_stim = visual.TextStim(win, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450)
-    
-    image.draw()
-    desc_stim.draw()
-    win.flip()
+        # Display the description text
+        desc_text = trial['description_text']  
+        desc_stim = visual.TextStim(winA, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450)
+        desc_stim = visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450)
 
     # Start a timer
-    timer = core.Clock()
-    while timer.getTime() < 5:
-        core.wait(0.01)
+        timer = core.Clock()
+        while timer.getTime() < 5: # wait for 5s
+            core.wait(0.01)
 
-    # Load img4 as the background
-    imageShower.show_image(setup.img_4pics, win, pos=(0,-50), size=(1000, 1000))
-    background = visual.ImageStim(win, image=setup.img_4pics, pos=(0,-50), size=(1000, 1000))
-    background.draw()
-    
-    # Load and display the 4 images
-    images = [trial['stim1'], trial['stim2'], trial['stim3'], trial['stim4']]
-    positions = [(-123, 146), (125, 146), (-123, -104), (125, -104)]
-    size = (212, 212)
+        # Load img4 as the background
+        imageShower.show_image(setup.img_4pics, winA, pos=(0,-50), size=(1000, 1000))
+        imageShower.show_image(setup.img_4pics, winB, pos=(0,-50), size=(1000, 1000))
 
-  # Shuffle positions to counterbalance
-    shuffle(images)
+        # Load and display the 4 images
+        images = [trial['stim1'], trial['stim2'], trial['stim3'], trial['stim4']]
+        positions = [(-123, 146), (125, 146), (-123, -104), (125, -104)]
+        size = (212, 212)
 
-  # get path of images
-    path_images = [os.path.join(setup.img_folder, image) for image in images]
+    # Shuffle positions to counterbalance
+        shuffle(images)
 
-  # Create a response clock
-    rt_clock = core.Clock()
+    # get path of images
+        path_images = [os.path.join(setup.img_folder, image) for image in images]
 
-  # show shuffled images
-    imageShower.show_multiple_images(path_images, win, positions, size=size, wait_time=0, show_tags=True)
+    # show shuffled images
+        imageShower.show_multiple_images(path_images, winA, positions, size, wait_time=0, show_tags=True)
+        imageShower.show_multiple_images(path_images, winB, positions, size, wait_time=0, show_tags=True)
 
-  # Refresh screen to show images and numbers
-    win.flip()
+        # Reset clock
+        rt_clock.reset()
 
-  # Reset the clock right before starting to wait for a response
-    rt_clock.reset()
+        # Wait for a valid button press to continue
+        button_pressed = ''
+        while button_pressed not in setup.allowed_keys:
+            keys = kb.getKeys()
+            for key in keys:
+                if key.name in setup.allowed_keys:
+                    button_pressed = key.name
+                    rt = rt_clock.getTime()
+                    break
+            core.wait(0.01)  # Add a small delay
+            
+        # Stop the noise after the trial is done
+        noise.stop()
 
-    # Wait for a valid button press to continue
-    button_pressed = ''
-    while button_pressed not in button_mapping:
-        keys = kb.getKeys()
-        for key in keys:
-            if key.name in button_mapping:
-                button_pressed = key.name
-                rt = key.rt
-                button_data.append([dyad_number, trial_number, trial, button_pressed, rt])
-                break
-        core.wait(0.01)  # Add a small delay
-        
-    # Stop the noise after the trial is done
-    noise.stop()
+        # Write test data
+        selected_image = images[setup.allowed_keys[button_pressed-1]]
+        csv_writer.write_row([("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", rt)])
 
-    # Write test data
-    selected_image = images[button_mapping[button_pressed-1]]
-    csv_writer.write_row([("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", rt)])
+        roleSwitch(setup.role_switch)
 
 # Iterate through each trial in the Excel sheet
-roleSwitch()
+go_trial()
 
 # Close windows
 winA.close()

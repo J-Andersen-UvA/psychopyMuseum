@@ -43,7 +43,7 @@ def show_image(image_location, window, size=(700, 700), width=720, height=720, l
     else:
         print(f"Image not found: {image_location}")
 
-def show_multiple_images(image_locations, window, positions, size=(212, 212), wait_time=5):
+def show_multiple_images(image_locations, window, positions, size=(212, 212), wait_time=5, show_tags=True):
     # Shuffle positions to counterbalance
     shuffle(positions)
 
@@ -57,18 +57,20 @@ def show_multiple_images(image_locations, window, positions, size=(212, 212), wa
 
     window.flip()
 
+    if show_tags:
+        show_number_tags(window)
+
     print(f"[Show multiple images] Waiting for {wait_time} seconds no skip")
     timer = core.Clock()
     while timer.getTime() < wait_time:
         core.wait(0.01)
 
-def show_multiple_images(show_tags=True):
-    if show_tags:
-        number_tags = ["1", "2", "3", "4"]  # Define number tags (always in the same positions)
-        number_pos = [(89, 328), (337, 328), (89, 78), (337, 78)]
-        for i in range(4):
-            number_text = visual.TextStim(win, text=number_tags[i], color="#F5F5DC", height=30, pos=number_pos)
-            number_text.draw()  # Draw on top of images
+def show_number_tags(win):
+    number_tags = ["1", "2", "3", "4"]  # Define number tags (always in the same positions)
+    number_pos = [(89, 328), (337, 328), (89, 78), (337, 78)]
+    for i in range(4):
+        number_text = visual.TextStim(win, text=number_tags[i], color="#F5F5DC", height=30, pos=number_pos)
+        number_text.draw()  # Draw on top of images
 
 def update_window(window, content):
     content.draw()
