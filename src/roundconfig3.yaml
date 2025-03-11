@@ -2,8 +2,9 @@ texts:
     instr: "In deze opdracht kijken jullie naar verschillende schermen. Een van jullie ziet een abstract schilderij, terwijl de anderen vier schilderijen op het scherm zien. Het is jullie taak om samen te overleggen en voor degene die een schilderij ziet, om het zo te beschrijven dat de andere het juiste schilderij uit de vier schilderijen kan kiezen. Als jullie dat hebben besloten, gebruiken jullie het knoppenvak om een schilderij te selecteren. Vervolgens verschijnt de volgende beschrijving. Jullie wisselen van rol na de helft van de tijd."
 
 images:
-  img4_background: "img_folder/museumImages/museum_4pics.jpeg"
-  img4_background: "img_folder/museumImages/museum_1pic.jpeg"
+  img_folder: "img_folder/"
+  img4_background: "museumImages/museum_4pics.jpeg"
+  img4_background: "museumImages/museum_1pic.jpeg"
   text_background: null
 
 stimuli:

@@ -1,11 +1,10 @@
-from psychopy import visual, core, event, sound, data, monitors 
+from psychopy import visual, core, event, sound
 import csvManager
-from psychopy.hardware import keyboard as kb
+from psychopy.hardware import keyboard
 from psychopy.hardware import mouse as mouse
-import os, random
+import os
 from random import shuffle
 import imageShower as imageShower
-import yaml
 import general_setup as gs
 import round_setup as rs
 setup = gs.ExperimentSetup()
@@ -62,6 +61,9 @@ round_nr_stim = visual.TextStim(winB, text=round_nr_text,
                                colorSpace='hex', 
                                height=40, pos=(0, 0), 
                                wrapWidth=450)
+
+# Initialize keyboard
+kb = keyboard.Keyboard()
 
 # Wait for type the round number 
 while True:
@@ -170,7 +172,7 @@ intro = visual.TextStim(winA, text="Ronde " + str(round_number), color="white", 
 intro = visual.TextStim(winB, text="Ronde " + str(round_number), color="white", height=50)
 
 # Load in the round config
-round_setup = rs.RoundSetup(round_number)
+round_setup = rs.RoundSetup("roundconfig" + round_number + ".yaml")
 
 # create instruction text 
 visual.TextStim(winA,text=round_setup.instr)
@@ -201,7 +203,11 @@ rt_clock = core.Clock()
 
 # Iterate through each trial in the Excel sheet
 def go_trial():
-    for trial_number, trial in enumerate(setup.stims):
+    if not setup.no_obs:
+        setup.obs.send_name_obs(setup.output_folder, "dyad_" + dyad_number + "_round_" + round_number)
+        setup.obs.send_start_record_obs()
+
+    for trial_number, trial in enumerate(round_setup.stims):
 
         # Play the background noise
         noise.play(loops=-1)  # Infinite loop for continuous playback
@@ -211,27 +217,27 @@ def go_trial():
         desc_stim = visual.TextStim(winA, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450)
         desc_stim = visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450)
 
-    # Start a timer
+        # Start a timer
         timer = core.Clock()
         while timer.getTime() < 5: # wait for 5s
             core.wait(0.01)
 
         # Load img4 as the background
-        imageShower.show_image(setup.img_4pics, winA, pos=(0,-50), size=(1000, 1000))
-        imageShower.show_image(setup.img_4pics, winB, pos=(0,-50), size=(1000, 1000))
+        imageShower.show_image(round_setup.img4_background, winA, pos=(0,-50), size=(1000, 1000))
+        imageShower.show_image(round_setup.img4_background, winB, pos=(0,-50), size=(1000, 1000))
 
         # Load and display the 4 images
         images = [trial['stim1'], trial['stim2'], trial['stim3'], trial['stim4']]
         positions = [(-123, 146), (125, 146), (-123, -104), (125, -104)]
         size = (212, 212)
 
-    # Shuffle positions to counterbalance
+        # Shuffle positions to counterbalance
         shuffle(images)
 
-    # get path of images
-        path_images = [os.path.join(setup.img_folder, image) for image in images]
+        # get path of images
+        path_images = [os.path.join(round_setup.img_folder, image) for image in images]
 
-    # show shuffled images
+        # show shuffled images
         imageShower.show_multiple_images(path_images, winA, positions, size, wait_time=0, show_tags=True)
         imageShower.show_multiple_images(path_images, winB, positions, size, wait_time=0, show_tags=True)
 
@@ -256,7 +262,11 @@ def go_trial():
         selected_image = images[setup.allowed_keys[button_pressed-1]]
         csv_writer.write_row([("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", rt)])
 
-        roleSwitch(setup.role_switch)
+        roleSwitch(round_setup.role_switch)
+    
+    if not setup.no_obs:
+        setup.obs.send_stop_record_obs()
+        setup.obs.send_request_file_obs()
 
 # Iterate through each trial in the Excel sheet
 go_trial()

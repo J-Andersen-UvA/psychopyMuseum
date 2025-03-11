@@ -1,6 +1,9 @@
 import yaml
 import os
 import popUp
+from OBSRecorder.src.src_sendAndReceive.receiveFiles import run_receiver_in_new_terminal
+import websockets
+
 popUp = popUp.PopUp()
 
 class ExperimentSetup:
@@ -8,6 +11,7 @@ class ExperimentSetup:
     This is a setup class to fetch the default variables from.
     """
     def __init__(self, config_file="config.yaml"):
+        self.config = None
         # Load the YAML configuration file
         with open(config_file, 'r') as f:
             self.config = yaml.safe_load(f)
@@ -45,10 +49,39 @@ class ExperimentSetup:
         self.description_duration = self.config["timing"]["description_duration"]
 
         # OBS connection setup
-        self.no_obs = self.config["obs_connection"]["no_obs"]
-        self.obs_host = self.config["obs_connection"]["obs_host"]
-        self.obs_port = self.config["obs_connection"]["obs_port"]
-        self.obs_password = self.config["obs_connection"].get("obs_password", "")
+        self.no_obs = self.config["no_obs"]
+        if not self.no_obs:
+            self.obs = self.OBSConnection(self.config)
+
+    class OBSConnection:
+        def __init__(self, config):
+            self.receiver_machine_ip = config["receiver_machine"]["ip"]
+            self.receiver_machine_port = config["receiver_machine"]["port"]
+            self.python_path = config["python_path"]
+            self.receiver_script_path = config["receiver_script_path"]
+            self.output_folder = os.path.abspath(config["files"]["output_folder"])
+            run_receiver_in_new_terminal(self.receiver_machine_ip, self.receiver_machine_port, self.output_folder + "\\video", self.receiver_script_path, self.python_path)
+
+            self.obs_target_host = config["obs_host"]["target_host"]
+            self.obs_target_port = config["obs_host"]["target_port"]
+            self.obs_ws = f"ws://{self.obs_target_host}:{self.obs_target_port}"
+
+        async def send_message_obs(self, message):
+            async with websockets.connect(self.obs_ws) as websocket:
+                await websocket.send(message)
+                print(f"Sent message: {message}")
+
+        async def send_name_obs(self, name):
+            await self.send_message_obs(f"SetName {name}")
+
+        async def send_start_record_obs(self):
+            await self.send_message_obs("Start")
+
+        async def send_stop_record_obs(self):
+            await self.send_message_obs("Stop")
+
+        async def send_request_file_obs(self):
+            await self.send_message_obs(f"SendFilePrevious {self.receiver_machine_ip} {self.receiver_machine_port}")
 
     def validate_paths(self):
         """
@@ -76,12 +109,12 @@ class ExperimentSetup:
                     "Warning", f"The file '{file}' does not exist. Quiting the program..."
                 )
 
-        # Check if the image folder exists
-        if not os.path.exists(self.img_folder):
-            create = popUp.show_popup_yesno(
-                "Warning", f"The image folder '{self.img_folder}' does not exist. Do you want to create it?"
-            )
-            if not create:
-                raise FileNotFoundError(f"Image folder not found: {self.img_folder}")
-            else:
-                os.makedirs(self.img_folder, exist_ok=True)
+        # # Check if the image folder exists
+        # if not os.path.exists(self.img_folder):
+        #     create = popUp.show_popup_yesno(
+        #         "Warning", f"The image folder '{self.img_folder}' does not exist. Do you want to create it?"
+        #     )
+        #     if not create:
+        #         raise FileNotFoundError(f"Image folder not found: {self.img_folder}")
+        #     else:
+        #         os.makedirs(self.img_folder, exist_ok=True)

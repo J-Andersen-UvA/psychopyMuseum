@@ -16,14 +16,17 @@ class RoundSetup:
             self.prompts = self.round.get("prompts")
 
             # Load in all images
-            self.img4_background = self.round["images"]["img4_background"]
-            self.img1_background = self.round["images"]["img1_background"]
-            self.text_background = self.round["images"]["text_background"]
+            self.img_folder = self.round["images"]["img_folder"]
+            self.img4_background = self.img_folder + self.round["images"]["img4_background"]
+            self.img1_background = self.img_folder + self.round["images"]["img1_background"]
+            self.text_background = self.img_folder + self.round["images"]["text_background"]
 
             # Load in the stimulus files
             self.stims = self.stimulus_setup(self.round["stim_file"])
 
             self.role_switch = self.round.get("role_switch")
+
+            self.validate_paths()
     
     def stimulus_setup(self, file_path):
         stim_file_data = data.importConditions(file_path) # import Excel sheet data
@@ -36,24 +39,17 @@ class RoundSetup:
             self.img4_background,
             self.img1_background,
             self.text_background,
-            self.stim_file,
         ]
-        
-        # Loop through files to check if they exist
-        for file in files_to_check:
-            if not os.path.isfile(file):
-                print(f"Warning: The file {file} does not exist.")
 
-
-        # Check if the root folder exists
-        if not os.path.exists(self.output_folder):
-            create = popUp.show_popup_yesno(
-                "Warning", f"The output folder '{self.output_folder}' does not exist. Do you want to create it?"
-            )
-            if not create:
-                raise ValueError(f"Output folder path '{self.output_folder}' does not exist.")
-            else:
-                os.makedirs(self.output_folder, exist_ok=True)
+        # # Check if the root folder exists
+        # if not os.path.exists(self.output_folder):
+        #     create = popUp.show_popup_yesno(
+        #         "Warning", f"The output folder '{self.output_folder}' does not exist. Do you want to create it?"
+        #     )
+        #     if not create:
+        #         raise ValueError(f"Output folder path '{self.output_folder}' does not exist.")
+        #     else:
+        #         os.makedirs(self.output_folder, exist_ok=True)
 
         # Check if the main files exist
         for file in files_to_check:
