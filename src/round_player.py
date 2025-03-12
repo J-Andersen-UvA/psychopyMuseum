@@ -8,6 +8,18 @@ import imageShower as imageShower
 import general_setup as gs
 import round_setup as rs
 setup = gs.ExperimentSetup()
+from psychtoolbox import audio
+
+
+# Get list of available audio devices
+devices = audio.PsychPortAudio('GetDevices')
+
+# Print the device names to find the Realtek device
+for i, device in enumerate(devices):
+    print(f"{i}: {device}")
+
+device_index = 3  # Index for Realtek speakers or any device you want to use
+set_audio_device(dev=device_index, kind='output')
 
 def roleSwitch(enable):
     if main_timer.getTime() > 30 and enable:     # Check if it's time to switch roles 
@@ -156,6 +168,7 @@ while True:
 
     # select noise dependent on input
     keys = kb.getKeys()
+
     for key in keys:
         if key.name == 's':
             noise = sound.Sound(setup.noise_soc, stereo=True, sampleRate=44100)
