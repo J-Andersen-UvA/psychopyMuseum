@@ -15,8 +15,16 @@ winB: 0
 
 files:
   output_folder: "output/"
-  noise_soc: "C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\background_noise_30"
-  noise_nonsoc: "C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\pink_noise_30"
+  noise_soc: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/background_noise_30"
+  noise_nonsoc: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/pink_noise_30"
+
+# Jari PC paths:
+# noise_soc: "C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\background_noise_30"
+# noise_nonsoc: "C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\pink_noise_30"
+# Anna PC paths
+# noise_soc: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/background_noise_30"
+# noise_nonsoc: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/pink_noise_30"
+
 
 input:
   key_1: "a"
