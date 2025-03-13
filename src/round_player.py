@@ -1,4 +1,4 @@
-from psychopy import visual, core, event, sound
+from psychopy import visual, core, event
 import csvManager
 from psychopy.hardware import keyboard
 from psychopy.hardware import mouse as mouse
@@ -8,18 +8,10 @@ import imageShower as imageShower
 import general_setup as gs
 import round_setup as rs
 setup = gs.ExperimentSetup()
-from psychtoolbox import audio
+from sound_player import SoundPlayer
+sound_player = SoundPlayer()
 
 
-# Get list of available audio devices
-devices = audio.PsychPortAudio('GetDevices')
-
-# Print the device names to find the Realtek device
-for i, device in enumerate(devices):
-    print(f"{i}: {device}")
-
-device_index = 3  # Index for Realtek speakers or any device you want to use
-set_audio_device(dev=device_index, kind='output')
 
 def roleSwitch(enable):
     if main_timer.getTime() > 30 and enable:     # Check if it's time to switch roles 
@@ -171,14 +163,19 @@ while True:
 
     for key in keys:
         if key.name == 's':
-            noise = sound.Sound(setup.noise_soc, stereo=True, sampleRate=44100)
             selected_noise = 'soc'
         elif key.name == 'n':
-            noise = sound.Sound(setup.noise_nonsoc, stereo=True, sampleRate=44100)
             selected_noise = 'nonsoc'
     if 's' in [key.name for key in keys] or 'n' in [key.name for key in keys]:
         break
     core.wait(0.01)
+
+def play_noise():
+    if selected_noise == 'soc':
+        noise = sound_player.play(setup.noise_soc)
+    elif selected_noise == 'nonsoc':
+        noise = sound_player.play(setup.noise_nonsoc)
+    return noise
 
 # create intro text for rounds 
 intro = visual.TextStim(winA, text="Ronde " + str(round_number), color="white", height=50)
@@ -223,7 +220,7 @@ def go_trial():
     for trial_number, trial in enumerate(round_setup.stims):
 
         # Play the background noise
-        noise.play(loops=-1)  # Infinite loop for continuous playback
+        play_noise()
 
         # Display the description text
         desc_text = trial['description_text']  
@@ -269,7 +266,7 @@ def go_trial():
             core.wait(0.01)  # Add a small delay
             
         # Stop the noise after the trial is done
-        noise.stop()
+        sound_player.stop()
 
         # Write test data
         selected_image = images[setup.allowed_keys[button_pressed-1]]
