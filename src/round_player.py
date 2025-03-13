@@ -38,14 +38,14 @@ winA = visual.Window(
     color=setup.window_color, 
     units=setup.window_units, 
     fullscr=setup.fullscreen,
-    monitor=setup.screenA)
+    screen=setup.screenA)
 
 winB = visual.Window(
     setup.window_size, 
     color=setup.window_color, 
     units=setup.window_units, 
     fullscr=setup.fullscreen,
-    monitor=setup.screenB)
+    screen=setup.screenB)
 
 # Add round number
 round_nr_text = "Round number: "
