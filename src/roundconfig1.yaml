@@ -9,6 +9,7 @@ prompts:
     prompt4: "Onderwerp 4: \n\nPlan een festival waar jullie allebei van zouden genieten"
 
 images:
+  img_folder: "img_folder/"
   img4_background: null
   img1_background: null
   text_background: null

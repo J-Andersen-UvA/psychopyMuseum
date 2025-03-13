@@ -20,6 +20,9 @@ def show_image(image_location, window, size=(700, 700), width=720, height=720, l
         frame (bool): Whether to draw a frame around the image.
 
     """
+    if not image_location:
+        return
+
     # load and display intro image
     if os.path.exists(image_location):
         image = visual.ImageStim(window, image=image_location, pos=pos, size=size)

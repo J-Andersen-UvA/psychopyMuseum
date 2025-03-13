@@ -48,6 +48,8 @@ class ExperimentSetup:
         self.instructions_duration = self.config["timing"]["instructions_duration"]
         self.description_duration = self.config["timing"]["description_duration"]
 
+        self.python_path = self.config["python_path"]
+
         # OBS connection setup
         self.no_obs = self.config["no_obs"]
         if not self.no_obs:

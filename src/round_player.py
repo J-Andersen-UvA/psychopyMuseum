@@ -9,9 +9,7 @@ import general_setup as gs
 import round_setup as rs
 setup = gs.ExperimentSetup()
 from sound_player import SoundPlayer
-sound_player = SoundPlayer()
-
-
+sound_player = SoundPlayer(python_path=setup.python_path)
 
 def roleSwitch(enable):
     if main_timer.getTime() > 30 and enable:     # Check if it's time to switch roles 
@@ -182,7 +180,7 @@ intro = visual.TextStim(winA, text="Ronde " + str(round_number), color="white", 
 intro = visual.TextStim(winB, text="Ronde " + str(round_number), color="white", height=50)
 
 # Load in the round config
-round_setup = rs.RoundSetup("roundconfig" + round_number + ".yaml")
+round_setup = rs.RoundSetup(round_number)
 
 # create instruction text 
 visual.TextStim(winA,text=round_setup.instr)

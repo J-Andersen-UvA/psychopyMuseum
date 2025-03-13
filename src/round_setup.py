@@ -7,7 +7,7 @@ from random import shuffle
 class RoundSetup:
     def __init__(self, round_number=1):
         # Load the YAML configuration file
-        with open("roundconfig" + str(round_number) + ".yaml", 'r') as f:
+        with open("src/roundconfig" + str(round_number) + ".yaml", 'r') as f:
             self.round = yaml.safe_load(f)
 
             # All texts to be displayed
@@ -17,16 +17,16 @@ class RoundSetup:
 
             # Load in all images
             self.img_folder = self.round["images"]["img_folder"]
-            self.img4_background = self.img_folder + self.round["images"]["img4_background"]
-            self.img1_background = self.img_folder + self.round["images"]["img1_background"]
-            self.text_background = self.img_folder + self.round["images"]["text_background"]
+            self.img4_background = self.img_folder + self.round["images"]["img4_background"] if (self.round["images"]["img4_background"] and self.img_folder) else None
+            self.img1_background = self.img_folder + self.round["images"]["img1_background"] if (self.round["images"]["img1_background"] and self.img_folder) else None
+            self.text_background = self.img_folder + self.round["images"]["text_background"] if (self.round["images"]["text_background"] and self.img_folder) else None
 
             # Load in the stimulus files
             self.stims = self.stimulus_setup(self.round["stim_file"])
 
             self.role_switch = self.round.get("role_switch")
 
-            self.validate_paths()
+            # self.validate_paths()
     
     def stimulus_setup(self, file_path):
         stim_file_data = data.importConditions(file_path) # import Excel sheet data
