@@ -12,9 +12,11 @@ from sound_player import SoundPlayer
 sound_player = SoundPlayer(python_path=setup.python_path)
 # Initialize keyboard
 kb = keyboard.Keyboard()
+role_switched = False
 
 def roleSwitch(enable):
-    if main_timer.getTime() > 30 and enable:     # Check if it's time to switch roles 
+    if main_timer.getTime() > 30 and enable and not role_switched:     # Check if it's time to switch roles 
+        print("Switching roles")
         role_switched = True  # Ensure roles are only switched once
         visual.TextStim(winA, text=round_setup.switch, color="white", height=30).draw()
         visual.TextStim(winB, text=round_setup.switch, color="white", height=30).draw()
