@@ -12,7 +12,7 @@ class SoundPlayer:
         if self.process is not None:
             print("Sound is already playing.")
             return
-        self.process = subprocess.Popen([self.python_path, "-c", f"from playsound import playsound; playsound(r'{sound_path}')"])
+        self.process = subprocess.Popen([self.python_path, "-c", f"from playsound import playsound; playsound(r'{sound_path}')"], creationflags=subprocess.CREATE_NEW_CONSOLE)
 
     def stop(self):
         if self.process is not None:

@@ -37,11 +37,13 @@ class ExperimentSetup:
         self.noise_nonsoc = self.config["files"]["noise_nonsoc"]
 
         # Keyboard
-        self.key_1 = self.config["input"]["key_1"]
-        self.key_2 = self.config["input"]["key_2"]
-        self.key_3 = self.config["input"]["key_3"]
-        self.key_4 = self.config["input"]["key_4"]
-        self.allowed_keys = [self.config["input"][key] for key in self.config["input"]]
+        # self.key_1 = self.config["input"]["key_1"]
+        # self.key_2 = self.config["input"]["key_2"]
+        # self.key_3 = self.config["input"]["key_3"]
+        # self.key_4 = self.config["input"]["key_4"]
+        self.allowed_keys = {}
+        for i, key in enumerate(self.config["input"]):
+            self.allowed_keys[self.config["input"][key]] = i
 
         # Timing
         self.intro_duration = self.config["timing"]["intro_duration"]

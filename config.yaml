@@ -7,20 +7,20 @@ window:
   size: [800, 600]
   color: "black"
   units: "pix"
-  fullscreen: False
+  fullscreen: True
 
 # define screens for windows
-winA: 0
-winB: 0
+winA: 1
+winB: 2
 
 files:
   output_folder: "output/"
-  noise_soc: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/background_noise_30"
-  noise_nonsoc: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/pink_noise_30"
-
+  # noise_soc: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/background_noise_30"
+  # noise_nonsoc: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/pink_noise_30"
 # Jari PC paths:
-# noise_soc: "C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\background_noise_30"
-# noise_nonsoc: "C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\pink_noise_30"
+  noise_soc: "C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\background_noise_30.wav"
+  noise_nonsoc: "C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\pink_noise_30.wav"
+
 # Anna PC paths
 # noise_soc: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/background_noise_30"
 # noise_nonsoc: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/pink_noise_30"
@@ -55,5 +55,5 @@ receiver_machine:
 #   # Leave empty if no password is set
 #   obs_password:
 
-python_path: 'C:/Users/VICON/.pyenv/pyenv-win/versions/3.10.11/python.exe'
+python_path: 'C:/Users/VICON/Desktop/Code/psychopyMuseum/psychopyMuseum/psychopy_env/Scripts/python.exe'
 receiver_script_path: 'C:\Users\VICON\Desktop\Code\OBSRecorder\OBSRecorder\src\src_sendAndReceive\receiveFiles.py'

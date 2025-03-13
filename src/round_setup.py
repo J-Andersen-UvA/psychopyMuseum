@@ -12,17 +12,17 @@ class RoundSetup:
 
             # All texts to be displayed
             self.instr = self.round["texts"]["instr"]
-            self.switch = self.round["texts"]["switch"]
             self.prompts = self.round.get("prompts")
 
             # Load in all images
-            self.img_folder = self.round["images"]["img_folder"]
-            self.img4_background = self.img_folder + self.round["images"]["img4_background"] if (self.round["images"]["img4_background"] and self.img_folder) else None
-            self.img1_background = self.img_folder + self.round["images"]["img1_background"] if (self.round["images"]["img1_background"] and self.img_folder) else None
-            self.text_background = self.img_folder + self.round["images"]["text_background"] if (self.round["images"]["text_background"] and self.img_folder) else None
+            self.img_folder_root = self.round["images"]["img_folder"]
+            self.img4_background = self.img_folder_root + self.round["images"]["img4_background"] if (self.round["images"]["img4_background"] and self.img_folder_root) else None
+            self.img1_background = self.img_folder_root + self.round["images"]["img1_background"] if (self.round["images"]["img1_background"] and self.img_folder_root) else None
+            self.text_background = self.img_folder_root + self.round["images"]["text_background"] if (self.round["images"]["text_background"] and self.img_folder_root) else None
+            self.img_folder = self.img_folder_root + "artworks/" if self.img_folder_root else None
 
             # Load in the stimulus files
-            self.stims = self.stimulus_setup(self.round["stim_file"])
+            self.stims = self.stimulus_setup(self.round["stimuli"]["stim_file"])
 
             self.role_switch = self.round.get("role_switch")
 

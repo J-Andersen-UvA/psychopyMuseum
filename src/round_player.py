@@ -10,6 +10,8 @@ import round_setup as rs
 setup = gs.ExperimentSetup()
 from sound_player import SoundPlayer
 sound_player = SoundPlayer(python_path=setup.python_path)
+# Initialize keyboard
+kb = keyboard.Keyboard()
 
 def roleSwitch(enable):
     if main_timer.getTime() > 30 and enable:     # Check if it's time to switch roles 
@@ -27,10 +29,13 @@ def waitOrButton(wait_time=600, button="return"):
     """
     buttonTime = core.Clock()
 
+    print(f"Press {button} to continue or wait for {wait_time} seconds")
     while buttonTime.getTime() < wait_time:  # 10 minutes (600s)
-        keys = event.getKeys()  # Check for keypresses
+        keys = kb.getKeys()  # Check for keypresses
         if button in keys:  # return = enter
+            print("Button pressed")
             break 
+    print("Time is up")
 
 # create windows
 winA = visual.Window(
@@ -64,8 +69,6 @@ round_nr_stim = visual.TextStim(winB, text=round_nr_text,
                                height=40, pos=(0, 0), 
                                wrapWidth=450)
 
-# Initialize keyboard
-kb = keyboard.Keyboard()
 
 # Wait for type the round number 
 while True:
@@ -176,34 +179,43 @@ def play_noise():
     return noise
 
 # create intro text for rounds 
-intro = visual.TextStim(winA, text="Ronde " + str(round_number), color="white", height=50)
-intro = visual.TextStim(winB, text="Ronde " + str(round_number), color="white", height=50)
+visual.TextStim(winA, text="Ronde " + str(round_number), color="#F5F5DC", height=40, pos=(0, 0), wrapWidth=450).draw()
+visual.TextStim(winB, text="Ronde " + str(round_number), color="white", height=50).draw()
+winA.flip()
+winB.flip()
+waitOrButton()
 
 # Load in the round config
 round_setup = rs.RoundSetup(round_number)
 
 # create instruction text 
-visual.TextStim(winA,text=round_setup.instr)
-visual.TextStim(winB,text=round_setup.instr)
+visual.TextStim(winA,text=round_setup.instr).draw()
+visual.TextStim(winB,text=round_setup.instr).draw()
+winA.flip()
+winB.flip()
+waitOrButton()
 
 # Start a timer
 main_timer = core.Clock()
 
 # play prompts (only for for round 1)
-for prompt in round_setup.prompts:
-    visual.TextStim(winA, text=prompt, color="white", height=40).draw
-    visual.TextStim(winB, text=prompt, color="white", height=40).draw
-    waitOrButton()
-    winA.flip()  
-    winB.flip()  
+if round_setup.prompts:
+    for prompt in round_setup.prompts:
+        visual.TextStim(winA, text=prompt, color="white", height=40).draw()
+        visual.TextStim(winB, text=prompt, color="white", height=40).draw()
+        waitOrButton()
+        winA.flip()  
+        winB.flip()  
 
  # load background image
 imageShower.show_image(round_setup.img4_background, winA, size=(700, 700))
 imageShower.show_image(round_setup.img4_background, winB, size=(700, 700))
+waitOrButton()
 
 # zoom in background image
 imageShower.show_image(round_setup.img4_background, winA, pos=(0,-70), size=(1100, 1100))
 imageShower.show_image(round_setup.img4_background, winB, pos=(0,-70), size=(1100, 1100))
+waitOrButton()
 
 
  # Create a response clock
@@ -222,17 +234,16 @@ def go_trial():
 
         # Display the description text
         desc_text = trial['description_text']  
-        desc_stim = visual.TextStim(winA, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450)
-        desc_stim = visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450)
+        visual.TextStim(winA, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
+        visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
+        winA.flip()
+        winB.flip()
+        waitOrButton(5)
 
-        # Start a timer
-        timer = core.Clock()
-        while timer.getTime() < 5: # wait for 5s
-            core.wait(0.01)
 
         # Load img4 as the background
-        imageShower.show_image(round_setup.img4_background, winA, pos=(0,-50), size=(1000, 1000))
-        imageShower.show_image(round_setup.img4_background, winB, pos=(0,-50), size=(1000, 1000))
+        imageShower.show_image(round_setup.img4_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
+        imageShower.show_image(round_setup.img4_background, winB, pos=(0,-50), size=(1000, 1000), flip=False)
 
         # Load and display the 4 images
         images = [trial['stim1'], trial['stim2'], trial['stim3'], trial['stim4']]
@@ -246,19 +257,20 @@ def go_trial():
         path_images = [os.path.join(round_setup.img_folder, image) for image in images]
 
         # show shuffled images
-        imageShower.show_multiple_images(path_images, winA, positions, size, wait_time=0, show_tags=True)
-        imageShower.show_multiple_images(path_images, winB, positions, size, wait_time=0, show_tags=True)
+        imageShower.show_multiple_images(path_images, winA, positions, size, show_tags=True)
+        imageShower.show_multiple_images(path_images, winB, positions, size, show_tags=True)
 
         # Reset clock
         rt_clock.reset()
 
         # Wait for a valid button press to continue
         button_pressed = ''
-        while button_pressed not in setup.allowed_keys:
+        print(setup.allowed_keys.keys())
+        while button_pressed not in setup.allowed_keys.keys():
             keys = kb.getKeys()
-            for key in keys:
-                if key.name in setup.allowed_keys:
-                    button_pressed = key.name
+            for key in setup.allowed_keys.keys():
+                if key in keys:
+                    button_pressed = key
                     rt = rt_clock.getTime()
                     break
             core.wait(0.01)  # Add a small delay
@@ -267,7 +279,7 @@ def go_trial():
         sound_player.stop()
 
         # Write test data
-        selected_image = images[setup.allowed_keys[button_pressed-1]]
+        selected_image = images[setup.allowed_keys[button_pressed]]
         csv_writer.write_row([("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", rt)])
 
         roleSwitch(round_setup.role_switch)
