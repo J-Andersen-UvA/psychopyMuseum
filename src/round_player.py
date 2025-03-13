@@ -291,7 +291,19 @@ def go_trial():
         setup.obs.send_request_file_obs()
 
 # Iterate through each trial in the Excel sheet
-go_trial()
+try:
+    go_trial()
+except Exception as e:
+    print(e)
+    sound_player.stop()
+    if not setup.no_obs:
+        setup.obs.send_stop_record_obs()
+        setup.obs.send_request_file_obs()
+except KeyboardInterrupt:
+    sound_player.stop()
+    if not setup.no_obs:
+        setup.obs.send_stop_record_obs()
+        setup.obs.send_request_file_obs()
 
 # Close windows
 winA.close()
