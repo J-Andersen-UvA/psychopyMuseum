@@ -14,6 +14,7 @@ images:
   img1_background: null
   text_background: null
 
-stim_file: null
+stimuli:
+  stim_file: null
 
 role_switch: False

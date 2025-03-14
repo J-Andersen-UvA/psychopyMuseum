@@ -5,14 +5,14 @@ from psychopy import data
 from random import shuffle
 
 class RoundSetup:
-    def __init__(self, round_number=1):
+    def __init__(self, round_number):
         # Load the YAML configuration file
         with open("src/roundconfig" + str(round_number) + ".yaml", 'r') as f:
             self.round = yaml.safe_load(f)
 
             # All texts to be displayed
             self.instr = self.round["texts"]["instr"]
-            self.prompts = self.round.get("prompts")
+            self.prompts = list(self.round.get("prompts", {}).values())
 
             # Load in all images
             self.img_folder_root = self.round["images"]["img_folder"]

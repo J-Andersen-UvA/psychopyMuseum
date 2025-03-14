@@ -191,8 +191,8 @@ waitOrButton()
 round_setup = rs.RoundSetup(round_number)
 
 # create instruction text 
-visual.TextStim(winA,text=round_setup.instr).draw()
-visual.TextStim(winB,text=round_setup.instr).draw()
+visual.TextStim(winA,text=round_setup.instr, height=35).draw()
+visual.TextStim(winB,text=round_setup.instr, height=35).draw()
 winA.flip()
 winB.flip()
 waitOrButton()
@@ -205,9 +205,9 @@ if round_setup.prompts:
     for prompt in round_setup.prompts:
         visual.TextStim(winA, text=prompt, color="white", height=40).draw()
         visual.TextStim(winB, text=prompt, color="white", height=40).draw()
-        waitOrButton()
         winA.flip()  
         winB.flip()  
+        waitOrButton()
 
  # load background image
 imageShower.show_image(round_setup.img4_background, winA, size=(700, 700))
@@ -218,7 +218,6 @@ waitOrButton()
 imageShower.show_image(round_setup.img4_background, winA, pos=(0,-70), size=(1100, 1100))
 imageShower.show_image(round_setup.img4_background, winB, pos=(0,-70), size=(1100, 1100))
 waitOrButton()
-
 
  # Create a response clock
 rt_clock = core.Clock()
@@ -241,7 +240,6 @@ def go_trial():
         winA.flip()
         winB.flip()
         waitOrButton(5)
-
 
         # Load img4 as the background
         imageShower.show_image(round_setup.img4_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
