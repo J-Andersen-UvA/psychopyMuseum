@@ -3,10 +3,10 @@ texts:
     switch: null
 
 prompts:
-    prompt1: "Onderwerp 1: \n\nOntwerp een vijfgangendiner bestaande uit gerechten en drankjes die jullie allebei niet lekker vinden"
-    prompt2: "Onderwerp 2: \n\nBespreek en word het eens over welke twee verschillende superkrachten jullie allebei willen hebben"
-    prompt3: "Onderwerp 3: \n\nPlan een vakantie waar jullie allebei van zouden genieten"
-    prompt4: "Onderwerp 4: \n\nPlan een festival waar jullie allebei van zouden genieten"
+    prompt1: "Ontwerp een vijfgangendiner bestaande uit gerechten en drankjes die jullie allebei niet lekker vinden"
+    prompt2: "Bespreek en word het eens over welke twee verschillende superkrachten jullie allebei willen hebben"
+    prompt3: "Plan een vakantie waar jullie allebei van zouden genieten"
+    prompt4: "Plan een festival waar jullie allebei van zouden genieten"
 
 images:
   img_folder: "img_folder/"

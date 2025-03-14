@@ -247,16 +247,8 @@ def go_trial():
             winA.flip()
             winB.flip()
             waitOrButton(5)
-        else:
-            pass
 
-        # load img1 as the background
-        imageShower.show_image(round_setup.img1_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
-
-        # load and display one image
-        target_img_path = os.path.join(round_setup.img_folder, trial['stim1'])
-        imageShower.show_image(target_img_path, winA, pos=(1,23), size=(485,485)).draw()
-
+        
         # Load img4 as the background
         imageShower.show_image(round_setup.img4_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
         imageShower.show_image(round_setup.img4_background, winB, pos=(0,-50), size=(1000, 1000), flip=False)
@@ -275,6 +267,17 @@ def go_trial():
         # show shuffled images
         imageShower.show_multiple_images(path_images, winA, positions, size, show_tags=True)
         imageShower.show_multiple_images(path_images, winB, positions, size, show_tags=True)
+
+        if 'target_image' in trial:
+            
+            # load img1 as the background
+            imageShower.show_image(round_setup.img1_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
+
+            # load and display one image
+            target_stim = trial['target_image']  
+            img_name = trial[target_stim]  # This will get the image file name from the corresponding column (stim1, stim2, etc.)
+            target_img_path = os.path.join(round_setup.img_folder, img_name)
+            imageShower.show_image(target_img_path, winA, pos=(1,23), size=(485,485))
 
         # Reset clock
         rt_clock.reset()
@@ -314,6 +317,7 @@ except Exception as e:
         setup.obs.send_stop_record_obs()
         setup.obs.send_request_file_obs()
 except KeyboardInterrupt:
+
     sound_player.stop()
     if not setup.no_obs:
         setup.obs.send_stop_record_obs()
