@@ -191,8 +191,8 @@ waitOrButton()
 round_setup = rs.RoundSetup(round_number)
 
 # create instruction text 
-visual.TextStim(winA,text=round_setup.instr, height=35).draw()
-visual.TextStim(winB,text=round_setup.instr, height=35).draw()
+visual.TextStim(winA,text=round_setup.instr, height=30).draw()
+visual.TextStim(winB,text=round_setup.instr, height=30).draw()
 winA.flip()
 winB.flip()
 waitOrButton()
@@ -203,11 +203,13 @@ main_timer = core.Clock()
 # play prompts (only for for round 1)
 if round_setup.prompts:
     for prompt in round_setup.prompts:
+        play_noise()
         visual.TextStim(winA, text=prompt, color="white", height=40).draw()
         visual.TextStim(winB, text=prompt, color="white", height=40).draw()
         winA.flip()  
         winB.flip()  
         waitOrButton()
+        sound_player.stop()
 
  # load background image
 imageShower.show_image(round_setup.img4_background, winA, size=(700, 700))
@@ -235,8 +237,8 @@ def go_trial():
 
         # Display the description text
         desc_text = trial['description_text']  
-        visual.TextStim(winA, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
-        visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
+        visual.TextStim(winA, text=desc_text, color="#F5F5DC", colorSpace='hex', height=35, pos=(0, 20), wrapWidth=450).draw()
+        visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=35, pos=(0, 20), wrapWidth=450).draw()
         winA.flip()
         winB.flip()
         waitOrButton(5)

@@ -20,7 +20,7 @@ class SoundPlayer:
 
     def stop(self):
         if self.process is not None:
-            os.kill(self.process.pid, signal.SIGTERM)
+            self.process.terminate()  # Gracefully terminates the process
             self.process = None
         else:
             print("No sound is playing.")
