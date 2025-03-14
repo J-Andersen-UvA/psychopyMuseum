@@ -51,7 +51,8 @@ def show_multiple_images(image_locations, window, positions, size=(212, 212), sh
         if os.path.exists(image_location):
             visual.ImageStim(window, image=image_location, pos=positions[i], size=size).draw()
             if show_tags:
-                tagx, tagy = positions[i][0], positions[i][1] - 100
+                tagx, tagy = positions[i][0] + size[0] / 2 - 30, positions[i][1] - size[1] / 2 + 30  # Adjusting for bottom-right position
+                visual.Rect(window, width=40, height=40, color='black', pos=(tagx, tagy)).draw()
                 visual.TextStim(window, text=str(i+1), color="#F5F5DC", height=30, pos=(tagx, tagy)).draw()
         else:
             print(f"Image not found: {image_location}")

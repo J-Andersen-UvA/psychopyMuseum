@@ -253,8 +253,6 @@ def go_trial():
 
         # Load and display the 4 images
         images = [trial['stim1'], trial['stim2'], trial['stim3'], trial['stim4']]
-        #positions = [(-123, 146), (125, 146), (-123, -104), (125, -104)]
-        #size = (212, 212)
         positions = [(-142, 182), (144, 182), (-142, -105), (144, -105)]  
         size = (237, 237) 
 
