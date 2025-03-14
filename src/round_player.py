@@ -54,8 +54,45 @@ winB = visual.Window(
     fullscr=setup.fullscreen,
     screen=setup.screenB)
 
+# Add dyad number
+dyad_nr_text = "Dyad: "
+dyad_number = ""
+
+# display text
+dyad_nr_stim = visual.TextStim(winA, text=dyad_nr_text, 
+                               color="#F5F5DC", 
+                               colorSpace='hex', 
+                               height=40, pos=(0, 0), 
+                               wrapWidth=450)
+
+dyad_nr_stim = visual.TextStim(winB, text=dyad_nr_text, 
+                               color="#F5F5DC", 
+                               colorSpace='hex', 
+                               height=40, pos=(0, 0), 
+                               wrapWidth=450)
+
+# Wait for type the dyad number 
+while True:
+    dyad_nr_stim.text = dyad_nr_text + dyad_number
+    dyad_nr_stim.draw()
+    winA.flip()
+    winB.flip()
+
+    keys = kb.getKeys()
+    for key in keys:
+        if key.name == 'return' and dyad_number != "":  # Press 'Enter' to submit the input
+            break
+        elif key.name == 'backspace':  # Handle backspace to delete characters
+            dyad_number = dyad_number[:-1]
+        elif len(key.name) == 1:  # Add characters to dyad number
+            dyad_number += key.name
+
+    if 'return' in [key.name for key in keys]:
+        break
+    core.wait(0.01)
+
 # Add round number
-round_nr_text = "Round number: "
+round_nr_text = "Round: "
 round_number = ""
 
 #display text
@@ -92,43 +129,6 @@ while True:
         break
     core.wait(0.01)
 
-# Add dyad number
-dyad_nr_text = "Dyad number: "
-dyad_number = ""
-
-# display text
-dyad_nr_stim = visual.TextStim(winA, text=dyad_nr_text, 
-                               color="#F5F5DC", 
-                               colorSpace='hex', 
-                               height=40, pos=(0, 0), 
-                               wrapWidth=450)
-
-dyad_nr_stim = visual.TextStim(winB, text=dyad_nr_text, 
-                               color="#F5F5DC", 
-                               colorSpace='hex', 
-                               height=40, pos=(0, 0), 
-                               wrapWidth=450)
-
-# Wait for type the dyad number 
-while True:
-    dyad_nr_stim.text = dyad_nr_text + dyad_number
-    dyad_nr_stim.draw()
-    winA.flip()
-    winB.flip()
-
-    keys = kb.getKeys()
-    for key in keys:
-        if key.name == 'return' and dyad_number != "":  # Press 'Enter' to submit the input
-            break
-        elif key.name == 'backspace':  # Handle backspace to delete characters
-            dyad_number = dyad_number[:-1]
-        elif len(key.name) == 1:  # Add characters to dyad number
-            dyad_number += key.name
-
-    if 'return' in [key.name for key in keys]:
-        break
-    core.wait(0.01)
-
 # create output file for button presses 
 output_file = os.path.join(setup.output_folder, dyad_number)
 # define column headers
@@ -137,7 +137,7 @@ os.makedirs(setup.output_folder, exist_ok=True)
 csv_writer = csvManager.CSVWriter(output_file + ".csv", headers)
 
 # Add social or nonsocial noise
-noise_text = "Noise type: "
+noise_text = "Noise: "
 selected_noise = ""
 
 #display noise text
@@ -240,12 +240,22 @@ def go_trial():
         imageShower.show_image(round_setup.text_background, winB, pos=(0,-50), size=(1000, 1000), flip=False)
 
         # Display the description text
-        desc_text = trial['description_text']  
-        visual.TextStim(winA, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
-        visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
-        winA.flip()
-        winB.flip()
-        waitOrButton(5)
+        if 'description_text' in trial:
+            desc_text = trial['description_text']  
+            visual.TextStim(winA, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
+            visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
+            winA.flip()
+            winB.flip()
+            waitOrButton(5)
+        else:
+            pass
+
+        # load img1 as the background
+        imageShower.show_image(round_setup.img1_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
+
+        # load and display one image
+        target_img_path = os.path.join(round_setup.img_folder, trial['stim1'])
+        imageShower.show_image(target_img_path, winA, pos=(1,23), size=(485,485)).draw()
 
         # Load img4 as the background
         imageShower.show_image(round_setup.img4_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
