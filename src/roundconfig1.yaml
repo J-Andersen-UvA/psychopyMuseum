@@ -1,6 +1,6 @@
 texts:
     instr: "In deze opdracht zien jullie een gespreksonderwerp op het scherm. Gebruik deze als inspiratie voor een gesprek en praat er vrijuit over. Als jullie het gevoel hebben dat er niets meer is om over te praten, druk dan op een knop op de buttonbox en er verschijnen nieuwe gespreksonderwerpen."
-    switch: "De rollen zijn nu omgedraaid"
+    switch: null
 
 prompts:
     prompt1: "Onderwerp 1: \n\nOntwerp een vijfgangendiner bestaande uit gerechten en drankjes die jullie allebei niet lekker vinden"

@@ -12,6 +12,7 @@ class RoundSetup:
 
             # All texts to be displayed
             self.instr = self.round["texts"]["instr"]
+            self.switch = self.switch["texts"]["switch"]
             self.prompts = list(self.round.get("prompts", {}).values())
 
             # Load in all images

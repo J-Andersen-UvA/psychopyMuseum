@@ -1,6 +1,7 @@
 texts:
     instr: "In deze opdracht zien jullie korte beschrijvingen van abstracte schilderijen op het scherm. \n\nStel jullie voor dat jullie bij een museumbezoek zijn en de gids beschrijft een schilderij aan jullie. \n\nDaarna zien jullie vier verschillende schilderijen op het scherm. Het is jullie taak om samen te overleggen en te beslissen welk van de vier schilderijen de gids heeft beschreven. \n\nAls jullie dat hebben besloten, gebruiken jullie het knoppenvak om een schilderij te selecteren. Dan verschijnt de volgende beschrijving."
-
+    switch: null
+    
 images:
   img_folder: "img_folder/"
   img4_background: "museumImages/museum_4pics.jpeg"
