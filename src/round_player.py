@@ -235,10 +235,14 @@ def go_trial():
         # Play the background noise
         play_noise()
 
+        # load text background image
+        imageShower.show_image(round_setup.text_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
+        imageShower.show_image(round_setup.text_background, winB, pos=(0,-50), size=(1000, 1000), flip=False)
+
         # Display the description text
         desc_text = trial['description_text']  
-        visual.TextStim(winA, text=desc_text, color="#F5F5DC", colorSpace='hex', height=35, pos=(0, 20), wrapWidth=450).draw()
-        visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=35, pos=(0, 20), wrapWidth=450).draw()
+        visual.TextStim(winA, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
+        visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
         winA.flip()
         winB.flip()
         waitOrButton(5)
@@ -249,8 +253,10 @@ def go_trial():
 
         # Load and display the 4 images
         images = [trial['stim1'], trial['stim2'], trial['stim3'], trial['stim4']]
-        positions = [(-123, 146), (125, 146), (-123, -104), (125, -104)]
-        size = (212, 212)
+        #positions = [(-123, 146), (125, 146), (-123, -104), (125, -104)]
+        #size = (212, 212)
+        positions = [(-142, 182), (144, 182), (-142, -105), (144, -105)]  
+        size = (237, 237) 
 
         # Shuffle positions to counterbalance
         shuffle(images)
