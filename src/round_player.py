@@ -236,8 +236,8 @@ def go_trial():
         play_noise()
 
         # load text background image
-        imageShower.show_image(round_setup.text_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
-        imageShower.show_image(round_setup.text_background, winB, pos=(0,-50), size=(1000, 1000), flip=False)
+        imageShower.show_image(round_setup.text_background, winA, pos=(0,-65), size=(1000, 1000), flip=False)
+        imageShower.show_image(round_setup.text_background, winB, pos=(0,-65), size=(1000, 1000), flip=False)
 
         # Display the description text
         if 'description_text' in trial:
@@ -248,15 +248,14 @@ def go_trial():
             winB.flip()
             waitOrButton(5)
 
-        
         # Load img4 as the background
         imageShower.show_image(round_setup.img4_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
         imageShower.show_image(round_setup.img4_background, winB, pos=(0,-50), size=(1000, 1000), flip=False)
 
         # Load and display the 4 images
         images = [trial['stim1'], trial['stim2'], trial['stim3'], trial['stim4']]
-        positions = [(-142, 182), (144, 182), (-142, -105), (144, -105)]  
-        size = (237, 237) 
+        positions = [(-138, 184), (141, 184), (-138, -107), (141, -107)]  
+        size = (238, 238) 
 
         # Shuffle positions to counterbalance
         shuffle(images)
