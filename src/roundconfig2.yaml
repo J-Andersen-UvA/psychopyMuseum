@@ -12,3 +12,4 @@ stimuli:
     stim_file: "stim_folder/stimuli_round2.xlsx"
 
 role_switch: False
+show_target: False

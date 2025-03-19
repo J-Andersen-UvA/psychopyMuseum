@@ -18,3 +18,4 @@ stimuli:
   stim_file: null
 
 role_switch: False
+show_target: False

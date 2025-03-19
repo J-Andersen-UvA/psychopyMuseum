@@ -14,9 +14,19 @@ sound_player = SoundPlayer(python_path=setup.python_path)
 kb = keyboard.Keyboard()
 role_switched = False
 
+def ShowTargetImage(enable):
+    if any(trial['trial'] == 'target_image' for trial in round_setup.stims):
+        # load img1 as the background
+        imageShower.show_image(round_setup.img1_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
+        # load and display one image
+        target_stim = trial['target_image']  
+        img_name = trial[target_stim]  # This will get the image file name from the corresponding column (stim1, stim2, etc.)
+        target_img_path = os.path.join(round_setup.img_folder, img_name)
+        imageShower.show_image(target_img_path, winA, pos=(1,23), size=(485,485))
+
 def roleSwitch(enable):
     if main_timer.getTime() > 30 and enable and not role_switched:     # Check if it's time to switch roles 
-        print("Switching roles")
+        print("De rollen zijn nu omgedraaid")
         role_switched = True  # Ensure roles are only switched once
         visual.TextStim(winA, text=round_setup.switch, color="white", height=30).draw()
         visual.TextStim(winB, text=round_setup.switch, color="white", height=30).draw()
@@ -267,16 +277,7 @@ def go_trial():
         imageShower.show_multiple_images(path_images, winA, positions, size, show_tags=True)
         imageShower.show_multiple_images(path_images, winB, positions, size, show_tags=True)
 
-        if 'target_image' in trial:
-            
-            # load img1 as the background
-            imageShower.show_image(round_setup.img1_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
-
-            # load and display one image
-            target_stim = trial['target_image']  
-            img_name = trial[target_stim]  # This will get the image file name from the corresponding column (stim1, stim2, etc.)
-            target_img_path = os.path.join(round_setup.img_folder, img_name)
-            imageShower.show_image(target_img_path, winA, pos=(1,23), size=(485,485))
+        ShowTargetImage(round_setup.show_target) 
 
         # Reset clock
         rt_clock.reset()

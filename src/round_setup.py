@@ -26,6 +26,8 @@ class RoundSetup:
             self.stims = self.stimulus_setup(self.round["stimuli"]["stim_file"])
 
             self.role_switch = self.round.get("role_switch")
+            self.show_target = self.round.get("show_target")
+
 
             # self.validate_paths()
     
