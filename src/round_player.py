@@ -152,7 +152,7 @@ if os.path.exists(output_file + ".csv"):
     )
 
 # define column headers
-headers = ["round_number", "dyad_number", "trial_number","target_img" "selected_img","accuracy", "reaction_time"]
+headers = ["round_number", "dyad_number", "trial_number", "target_img", "selected_img","accuracy", "reaction_time", "noise_type"]
 os.makedirs(setup.output_folder, exist_ok=True)
 csv_writer = csvManager.CSVWriter(output_file + ".csv", headers)
 
@@ -315,7 +315,7 @@ def go_trial():
 
         # Write test data
         selected_image = images[setup.allowed_keys[button_pressed]]
-        csv_writer.write_row([("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", rt)])
+        csv_writer.write_row([("round_number", round_number), ("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", rt), ("noise_type", selected_noise)])
 
         roleSwitch(round_setup)
     
