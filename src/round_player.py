@@ -25,7 +25,7 @@ def ShowTargetImage(enable):
         imageShower.show_image(target_img_path, winA, pos=(1,23), size=(485,485))
 
 def roleSwitch(enable):
-    if main_timer.getTime() > 30 and enable and not role_switched:     # Check if it's time to switch roles 
+    if main_timer.getTime() > 1 and enable and not role_switched:     # Check if it's time to switch roles 
         print("De rollen zijn nu omgedraaid")
         role_switched = True  # Ensure roles are only switched once
         visual.TextStim(winA, text=round_setup.switch, color="white", height=30).draw()
@@ -195,7 +195,7 @@ visual.TextStim(winA, text="Ronde " + str(round_number), color="#F5F5DC", height
 visual.TextStim(winB, text="Ronde " + str(round_number), color="white", height=50).draw()
 winA.flip()
 winB.flip()
-waitOrButton()
+waitOrButton(3)
 
 # Load in the round config
 round_setup = rs.RoundSetup(round_number)
@@ -205,7 +205,7 @@ visual.TextStim(winA,text=round_setup.instr, height=30).draw()
 visual.TextStim(winB,text=round_setup.instr, height=30).draw()
 winA.flip()
 winB.flip()
-waitOrButton()
+waitOrButton(10)
 
 # Start a timer
 main_timer = core.Clock()
@@ -218,18 +218,18 @@ if round_setup.prompts:
         visual.TextStim(winB, text=prompt, color="white", height=40).draw()
         winA.flip()  
         winB.flip()  
-        waitOrButton()
+        waitOrButton(600)
         sound_player.stop()
 
  # load background image
 imageShower.show_image(round_setup.img4_background, winA, size=(700, 700))
 imageShower.show_image(round_setup.img4_background, winB, size=(700, 700))
-waitOrButton()
+waitOrButton(5)
 
 # zoom in background image
 imageShower.show_image(round_setup.img4_background, winA, pos=(0,-70), size=(1100, 1100))
 imageShower.show_image(round_setup.img4_background, winB, pos=(0,-70), size=(1100, 1100))
-waitOrButton()
+waitOrButton(5)
 
  # Create a response clock
 rt_clock = core.Clock()
@@ -241,7 +241,7 @@ def go_trial():
         setup.obs.send_start_record_obs()
 
     for trial_number, trial in enumerate(round_setup.stims):
-
+        
         # Play the background noise
         play_noise()
 
