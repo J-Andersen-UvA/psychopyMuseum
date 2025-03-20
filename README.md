@@ -24,6 +24,7 @@ This project implements a psychological experiment using the PsychoPy framework.
 #### Requirements:
 - Python 3.8 or higher
 - PsychoPy library
+- playsound==1.2.2
 
 #### Setup:
 1. Install the dependencies:
@@ -31,6 +32,7 @@ This project implements a psychological experiment using the PsychoPy framework.
     pip install psychopy
     pip install obsws_python
     pip install websocket-client
+    pip install playsound==1.2.2
     ```
 2. Ensure the `config.yaml` file is set up with the correct paths and parameters.
 3. Place the stimuli images and Excel files in the appropriate folders.
