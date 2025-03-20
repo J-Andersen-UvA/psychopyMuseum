@@ -21,10 +21,17 @@ class SoundPlayer:
             print(f"Sound file does NOT exist {sound_path}.")
 
         def play_sound():
-            playsound(os.path.abspath(sound_path))
+            cmd = f"""from playsound import playsound; playsound(r"{sound_path}")"""
+            print(cmd)
+            self.process = subprocess.Popen(
+                [self.python_path, "-c", cmd],
+                creationflags=subprocess.CREATE_NO_WINDOW  # No visible terminal
+            )
 
-        self.process = threading.Thread(target=play_sound)
-        self.process.start()
+        # self.process = threading.Thread(target=play_sound)
+        # self.process.start()
+
+        play_sound()
 
         print("Sound started.")
 
@@ -37,10 +44,10 @@ class SoundPlayer:
 
 # Example usage:
 # player = SoundPlayer()
-# player.play(r"C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\background_noise_30.wav")
-# time.sleep(2)
-# player.stop()
-# time.sleep(1)
-# player.play(r"C:\Users\VICON\Desktop\Code\psychopyMuseum\psychopyMuseum\noise_folder\background_noise_30.wav")
+# # player.play(r"C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\background_noise_30.wav")
+# # time.sleep(2)
+# # player.stop()
+# # time.sleep(1)
+# player.play("C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\background_noise_30.wav")
 # time.sleep(2)
 # player.stop()

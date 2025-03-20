@@ -1,6 +1,7 @@
 import yaml
 import os
 import popUp
+popUp = popUp.PopUp()
 from psychopy import data
 from random import shuffle
 
@@ -26,7 +27,9 @@ class RoundSetup:
             self.stims = self.stimulus_setup(self.round["stimuli"]["stim_file"])
 
             self.role_switch = self.round.get("role_switch")
+            self.role_switch = self.role_switch if self.role_switch is not None else False
             self.show_target = self.round.get("show_target")
+            self.show_target = self.show_target if self.show_target is not None else False
 
             self.play_trial = self.round.get("play_trial")
             self.play_trial = self.play_trial if self.play_trial is not None else True

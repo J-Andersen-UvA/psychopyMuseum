@@ -10,30 +10,20 @@ import round_setup as rs
 setup = gs.ExperimentSetup()
 from sound_player import SoundPlayer
 sound_player = SoundPlayer(python_path=setup.python_path)
+import popUp
+popUp = popUp.PopUp()
 # Initialize keyboard
 kb = keyboard.Keyboard()
 role_switched = False
 
-def ShowTargetImage(enable):
-    if any(trial['trial'] == 'target_image' for trial in round_setup.stims):
-        # load img1 as the background
-        imageShower.show_image(round_setup.img1_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
-        # load and display one image
-        target_stim = trial['target_image']  
-        img_name = trial[target_stim]  # This will get the image file name from the corresponding column (stim1, stim2, etc.)
-        target_img_path = os.path.join(round_setup.img_folder, img_name)
-        imageShower.show_image(target_img_path, winA, pos=(1,23), size=(485,485))
-
-def roleSwitch(enable):
-    if main_timer.getTime() > 1 and enable and not role_switched:     # Check if it's time to switch roles 
-        print("De rollen zijn nu omgedraaid")
-        role_switched = True  # Ensure roles are only switched once
-        visual.TextStim(winA, text=round_setup.switch, color="white", height=30).draw()
-        visual.TextStim(winB, text=round_setup.switch, color="white", height=30).draw()
-        winA.flip()
-        winB.flip()
-        core.wait(5) # wait for 5s
-        winA, winB = winB, winA  # Swap the windows
+def ShowTargetImage(trial, round_setup):
+    # load img1 as the background
+    imageShower.show_image(round_setup.img1_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
+    # load and display one image
+    target_stim = trial['target_image']  
+    img_name = trial[target_stim]  # This will get the image file name from the corresponding column (stim1, stim2, etc.)
+    target_img_path = os.path.join(round_setup.img_folder, img_name)
+    imageShower.show_image(target_img_path, winA, pos=(1,23), size=(485,485), flip=False)
 
 def waitOrButton(wait_time=600, button="return"):
     """
@@ -63,6 +53,20 @@ winB = visual.Window(
     units=setup.window_units, 
     fullscr=setup.fullscreen,
     screen=setup.screenB)
+
+def roleSwitch(round_setup):
+    global role_switched
+    global winA
+    global winB
+    if main_timer.getTime() > 10 and round_setup.role_switch and not role_switched:     # Check if it's time to switch roles 
+        print("De rollen zijn nu omgedraaid")
+        role_switched = True  # Ensure roles are only switched once
+        visual.TextStim(winA, text=round_setup.switch, color="white", height=40).draw()
+        winA.flip()
+        visual.TextStim(winB, text=round_setup.switch, color="white", height=40).draw()
+        winB.flip()
+        waitOrButton()
+        winA, winB = winB, winA  # Swap the windows
 
 # Add dyad number
 dyad_nr_text = "Dyad: "
@@ -140,7 +144,13 @@ while True:
     core.wait(0.01)
 
 # create output file for button presses 
-output_file = os.path.join(setup.output_folder, dyad_number)
+output_file = os.path.join(setup.output_folder, f"dyad_{dyad_number}_round_{round_number}")
+# Check if the file already exists
+if os.path.exists(output_file + ".csv"):
+    popUp.show_warning_then_exit(
+        "Warning", f"The file '{output_file}.csv' already exists. Quiting the program..."
+    )
+
 # define column headers
 headers = ["round_number", "dyad_number", "trial_number","target_img" "selected_img","accuracy", "reaction_time"]
 os.makedirs(setup.output_folder, exist_ok=True)
@@ -188,7 +198,6 @@ def play_noise():
         sound_player.play(setup.noise_soc)
     elif selected_noise == 'nonsoc':
         sound_player.play(setup.noise_nonsoc)
-    print("Playing noise")
     return
 
 # create intro text for rounds 
@@ -226,13 +235,13 @@ if round_setup.prompts:
 result1 = imageShower.show_image(round_setup.img4_background, winA, size=(700, 700))
 result2 = imageShower.show_image(round_setup.img4_background, winB, size=(700, 700))
 if result1 and result2:
-    waitOrButton()
+    waitOrButton(5)
 
 # zoom in background image
 result1 = imageShower.show_image(round_setup.img4_background, winA, pos=(0,-70), size=(1100, 1100))
 result2 = imageShower.show_image(round_setup.img4_background, winB, pos=(0,-70), size=(1100, 1100))
 if result1 and result2:
-    waitOrButton()
+    waitOrButton(5)
 
  # Create a response clock
 rt_clock = core.Clock()
@@ -250,8 +259,8 @@ def go_trial():
         play_noise()
 
         # load text background image
-        imageShower.show_image(round_setup.text_background, winA, pos=(0,-65), size=(1000, 1000), flip=False)
-        imageShower.show_image(round_setup.text_background, winB, pos=(0,-65), size=(1000, 1000), flip=False)
+        imageShower.show_image(round_setup.text_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
+        imageShower.show_image(round_setup.text_background, winB, pos=(0,-50), size=(1000, 1000), flip=False)
 
         # Display the description text
         if 'description_text' in trial:
@@ -260,7 +269,7 @@ def go_trial():
             visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
             winA.flip()
             winB.flip()
-            waitOrButton(5)
+            waitOrButton(10)
 
         # Load img4 as the background
         imageShower.show_image(round_setup.img4_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
@@ -278,10 +287,13 @@ def go_trial():
         path_images = [os.path.join(round_setup.img_folder, image) for image in images]
 
         # show shuffled images
-        imageShower.show_multiple_images(path_images, winA, positions, size, show_tags=True)
-        imageShower.show_multiple_images(path_images, winB, positions, size, show_tags=True)
+        imageShower.show_multiple_images(path_images, winA, positions, size, show_tags=True, flip=False)
+        imageShower.show_multiple_images(path_images, winB, positions, size, show_tags=True, flip=False)
 
-        ShowTargetImage(round_setup.show_target) 
+        if round_setup.show_target:
+            ShowTargetImage(trial, round_setup)
+        winA.flip()
+        winB.flip()
 
         # Reset clock
         rt_clock.reset()
@@ -305,7 +317,7 @@ def go_trial():
         selected_image = images[setup.allowed_keys[button_pressed]]
         csv_writer.write_row([("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", rt)])
 
-        roleSwitch(round_setup.role_switch)
+        roleSwitch(round_setup)
     
     if not setup.no_obs:
         setup.obs.send_stop_record_obs()

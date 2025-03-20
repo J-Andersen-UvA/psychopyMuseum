@@ -45,7 +45,7 @@ def show_image(image_location, window, size=(700, 700), width=720, height=720, l
         print(f"Image not found: {image_location}")
         return False
 
-def show_multiple_images(image_locations, window, positions, size=(212, 212), show_tags=True):
+def show_multiple_images(image_locations, window, positions, size=(212, 212), show_tags=True, flip=True):
     # Shuffle positions to counterbalance
 
     # Draw all images
@@ -59,4 +59,5 @@ def show_multiple_images(image_locations, window, positions, size=(212, 212), sh
         else:
             print(f"Image not found: {image_location}")
 
-    window.flip()
+    if flip:
+        window.flip()
