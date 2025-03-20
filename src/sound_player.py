@@ -2,6 +2,8 @@ import subprocess
 import os
 import signal
 import time
+import threading
+from playsound import playsound
 
 class SoundPlayer:
     def __init__(self, python_path="C:/Users/VICON/Desktop/Code/psychopyMuseum/psychopyMuseum/psychopy_env/Scripts/python.exe"):
@@ -13,10 +15,18 @@ class SoundPlayer:
             print("Sound is already playing.")
             return
 
-        self.process = subprocess.Popen(
-            [self.python_path, "-c", f"from playsound import playsound; playsound(r'{sound_path}')"],
-            creationflags=subprocess.CREATE_NO_WINDOW  # No visible terminal
-        )
+        if os.path.exists(sound_path):
+            print(f"Sound file exists: {sound_path}.")
+        else:
+            print(f"Sound file does NOT exist {sound_path}.")
+
+        def play_sound():
+            playsound(os.path.abspath(sound_path))
+
+        self.process = threading.Thread(target=play_sound)
+        self.process.start()
+
+        print("Sound started.")
 
     def stop(self):
         if self.process is not None:
@@ -27,7 +37,7 @@ class SoundPlayer:
 
 # Example usage:
 # player = SoundPlayer()
-# player.play(r"C:\Users\VICON\Desktop\Code\psychopyMuseum\psychopyMuseum\noise_folder\background_noise_30.wav")
+# player.play(r"C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\background_noise_30.wav")
 # time.sleep(2)
 # player.stop()
 # time.sleep(1)

@@ -19,3 +19,5 @@ stimuli:
 
 role_switch: False
 show_target: False
+
+play_trial: False

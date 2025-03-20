@@ -28,6 +28,8 @@ class RoundSetup:
             self.role_switch = self.round.get("role_switch")
             self.show_target = self.round.get("show_target")
 
+            self.play_trial = self.round.get("play_trial")
+            self.play_trial = self.play_trial if self.play_trial is not None else True
 
             # self.validate_paths()
     

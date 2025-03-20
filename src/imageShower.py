@@ -21,7 +21,7 @@ def show_image(image_location, window, size=(700, 700), width=720, height=720, l
 
     """
     if not image_location:
-        return
+        return False
 
     # load and display intro image
     if os.path.exists(image_location):
@@ -40,8 +40,10 @@ def show_image(image_location, window, size=(700, 700), width=720, height=720, l
         if flip:
             window.flip()
 
+        return True
     else:
         print(f"Image not found: {image_location}")
+        return False
 
 def show_multiple_images(image_locations, window, positions, size=(212, 212), show_tags=True):
     # Shuffle positions to counterbalance

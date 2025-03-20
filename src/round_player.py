@@ -185,10 +185,11 @@ while True:
 
 def play_noise():
     if selected_noise == 'soc':
-        noise = sound_player.play(setup.noise_soc)
+        sound_player.play(setup.noise_soc)
     elif selected_noise == 'nonsoc':
-        noise = sound_player.play(setup.noise_nonsoc)
-    return noise
+        sound_player.play(setup.noise_nonsoc)
+    print("Playing noise")
+    return
 
 # create intro text for rounds 
 visual.TextStim(winA, text="Ronde " + str(round_number), color="#F5F5DC", height=40, pos=(0, 0), wrapWidth=450).draw()
@@ -222,20 +223,23 @@ if round_setup.prompts:
         sound_player.stop()
 
  # load background image
-imageShower.show_image(round_setup.img4_background, winA, size=(700, 700))
-imageShower.show_image(round_setup.img4_background, winB, size=(700, 700))
-waitOrButton()
+result1 = imageShower.show_image(round_setup.img4_background, winA, size=(700, 700))
+result2 = imageShower.show_image(round_setup.img4_background, winB, size=(700, 700))
+if result1 and result2:
+    waitOrButton()
 
 # zoom in background image
-imageShower.show_image(round_setup.img4_background, winA, pos=(0,-70), size=(1100, 1100))
-imageShower.show_image(round_setup.img4_background, winB, pos=(0,-70), size=(1100, 1100))
-waitOrButton()
+result1 = imageShower.show_image(round_setup.img4_background, winA, pos=(0,-70), size=(1100, 1100))
+result2 = imageShower.show_image(round_setup.img4_background, winB, pos=(0,-70), size=(1100, 1100))
+if result1 and result2:
+    waitOrButton()
 
  # Create a response clock
 rt_clock = core.Clock()
 
 # Iterate through each trial in the Excel sheet
 def go_trial():
+    print("Playing trials")
     if not setup.no_obs:
         setup.obs.send_name_obs(setup.output_folder, "dyad_" + dyad_number + "_round_" + round_number)
         setup.obs.send_start_record_obs()
@@ -309,7 +313,10 @@ def go_trial():
 
 # Iterate through each trial in the Excel sheet
 try:
-    go_trial()
+    if round_setup.play_trial:
+        go_trial()
+    else:
+        print("No trials to play")
 except Exception as e:
     print(e)
     sound_player.stop()
