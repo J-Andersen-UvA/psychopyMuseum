@@ -8,8 +8,8 @@ import imageShower as imageShower
 import general_setup as gs
 import round_setup as rs
 setup = gs.ExperimentSetup()
-from sound_player import SoundPlayer
-sound_player = SoundPlayer(python_path=setup.python_path)
+# from sound_player import SoundPlayer
+# sound_player = SoundPlayer(python_path=setup.python_path)
 import popUp
 popUp = popUp.PopUp()
 # Initialize keyboard
@@ -194,10 +194,15 @@ while True:
     core.wait(0.01)
 
 def play_noise():
-    if selected_noise == 'soc':
-        sound_player.play(setup.noise_soc)
-    elif selected_noise == 'nonsoc':
-        sound_player.play(setup.noise_nonsoc)
+    if not setup.audio_player.isPlaying():
+        if selected_noise == 'soc':
+            setup.audio_player.play(setup.noise_soc)
+            # sound_player.play(setup.noise_soc)
+        elif selected_noise == 'nonsoc':
+            setup.audio_player.play(setup.noise_nonsoc)
+            # sound_player.play(setup.noise_nonsoc)
+    else:
+        setup.audio_player.play()
     return
 
 # create intro text for rounds 
@@ -229,7 +234,8 @@ if round_setup.prompts:
         winA.flip()  
         winB.flip()  
         waitOrButton(600)
-        sound_player.stop()
+        setup.audio_player.pause()
+        # sound_player.stop()
 
  # load background image
 result1 = imageShower.show_image(round_setup.img4_background, winA, size=(700, 700))
@@ -254,7 +260,6 @@ def go_trial():
         setup.obs.send_start_record_obs()
 
     for trial_number, trial in enumerate(round_setup.stims):
-        
         # Play the background noise
         play_noise()
 
@@ -311,7 +316,8 @@ def go_trial():
             core.wait(0.01)  # Add a small delay
             
         # Stop the noise after the trial is done
-        sound_player.stop()
+        setup.audio_player.pause()
+        # sound_player.stop()
 
         # Write test data
         selected_image = images[setup.allowed_keys[button_pressed]]
@@ -331,13 +337,14 @@ try:
         print("No trials to play")
 except Exception as e:
     print(e)
-    sound_player.stop()
+    setup.audio_player.stop()
+    # sound_player.stop()
     if not setup.no_obs:
         setup.obs.send_stop_record_obs()
         setup.obs.send_request_file_obs()
 except KeyboardInterrupt:
-
-    sound_player.stop()
+    setup.audio_player.stop()
+    # sound_player.stop()
     if not setup.no_obs:
         setup.obs.send_stop_record_obs()
         setup.obs.send_request_file_obs()

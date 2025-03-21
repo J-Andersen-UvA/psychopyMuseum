@@ -2,6 +2,7 @@ import yaml
 import os
 import popUp
 from OBSRecorder.src.src_sendAndReceive.receiveFiles import run_receiver_in_new_terminal
+from audioPlayerPy.PyAudioPlayer import PyAudioPlayer as AudioPlayer
 import websockets
 
 popUp = popUp.PopUp()
@@ -56,6 +57,9 @@ class ExperimentSetup:
         self.no_obs = self.config["no_obs"]
         if not self.no_obs:
             self.obs = self.OBSConnection(self.config)
+        
+        # Audio player
+        self.audio_player = AudioPlayer()
 
     class OBSConnection:
         def __init__(self, config):
