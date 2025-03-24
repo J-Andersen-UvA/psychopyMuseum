@@ -41,19 +41,6 @@ def waitOrButtons(wait_time=600, buttons=["return"]):
                 return
     print("Time is up")
 
-def waitOrButton(wait_time=600, button="return"):
-    """
-    Waits for a certain time (in seconds) or until a button (enter) is pressed
-    """
-    buttonTime = core.Clock()
-
-    print(f"Press {button} to continue or wait for {wait_time} seconds")
-    while buttonTime.getTime() < wait_time:  # 10 minutes (600s)
-        keys = kb.getKeys()  # Check for keypresses
-        if button in keys:  # return = enter
-            print("Button pressed")
-            break 
-    print("Time is up")
 
 # create windows
 winA = visual.Window(
@@ -81,7 +68,7 @@ def roleSwitch(round_setup):
         winA.flip()
         visual.TextStim(winB, text=round_setup.switch, color="white", height=40).draw()
         winB.flip()
-        waitOrButton()
+        waitOrButtons()
 
 # Add dyad number
 dyad_nr_text = "Dyad: "
@@ -225,7 +212,7 @@ visual.TextStim(winA, text="Ronde " + str(round_number), color="#F5F5DC", height
 visual.TextStim(winB, text="Ronde " + str(round_number), color="white", height=50).draw()
 winA.flip()
 winB.flip()
-waitOrButton(3)
+waitOrButtons(5)
 
 # Load in the round config
 round_setup = rs.RoundSetup(round_number)
@@ -235,7 +222,7 @@ visual.TextStim(winA,text=round_setup.instr, height=30).draw()
 visual.TextStim(winB,text=round_setup.instr, height=30).draw()
 winA.flip()
 winB.flip()
-waitOrButton(10)
+waitOrButtons(time=600, buttons=list(setup.allowed_keys.keys()))
 
 # Start a timer
 main_timer = core.Clock()
@@ -248,22 +235,22 @@ if round_setup.prompts:
         visual.TextStim(winB, text=prompt, color="white", height=40).draw()
         winA.flip()  
         winB.flip()  
-        waitOrButton(2, button="return")
+        waitOrButtons(2, button="return")
         waitOrButtons(wait_time=600, buttons=list(setup.allowed_keys.keys())) # 10 minutes or button
         setup.audio_player.pause()
         # sound_player.stop()
 
- # load background image
-result1 = imageShower.show_image(round_setup.img4_background, winA, size=(700, 700))
-result2 = imageShower.show_image(round_setup.img4_background, winB, size=(700, 700))
-if result1 and result2:
-    waitOrButton(5)
+#  # load background image
+# result1 = imageShower.show_image(round_setup.img4_background, winA, size=(700, 700))
+# result2 = imageShower.show_image(round_setup.img4_background, winB, size=(700, 700))
+# if result1 and result2:
+#     waitOrButtons(time=600, buttons=list(setup.allowed_keys.keys()))
 
-# zoom in background image
-result1 = imageShower.show_image(round_setup.img4_background, winA, pos=(0,-70), size=(1100, 1100))
-result2 = imageShower.show_image(round_setup.img4_background, winB, pos=(0,-70), size=(1100, 1100))
-if result1 and result2:
-    waitOrButton(5)
+# # zoom in background image
+# result1 = imageShower.show_image(round_setup.img4_background, winA, pos=(0,-70), size=(1100, 1100))
+# result2 = imageShower.show_image(round_setup.img4_background, winB, pos=(0,-70), size=(1100, 1100))
+# if result1 and result2:
+#     waitOrButtons(time=600, buttons=list(setup.allowed_keys.keys()))
 
  # Create a response clock
 rt_clock = core.Clock()
@@ -292,7 +279,7 @@ async def go_trial():
             visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
             winA.flip()
             winB.flip()
-            waitOrButton(10)
+            waitOrButtons(time=600, buttons=list(setup.allowed_keys.keys()))
 
         # Load img4 as the background
         imageShower.show_image(round_setup.img4_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
