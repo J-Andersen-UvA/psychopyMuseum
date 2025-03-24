@@ -61,7 +61,7 @@ def roleSwitch(round_setup):
     global role_switched
     global winA
     global winB
-    if main_timer.getTime() > 300:     # Check if it's time to end round
+    if main_timer.getTime() > 300 and round_setup.role_switch:     # Check if it's time to end round
         print("Dit is het einde van deze ronde")
         role_switched = True  # Ensure roles are only switched once
         visual.TextStim(winA, text=round_setup.switch, color="white", height=40).draw()
