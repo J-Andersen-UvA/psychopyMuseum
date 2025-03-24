@@ -7,6 +7,7 @@ from random import shuffle
 import imageShower as imageShower
 import general_setup as gs
 import round_setup as rs
+import asyncio
 setup = gs.ExperimentSetup()
 # from sound_player import SoundPlayer
 # sound_player = SoundPlayer(python_path=setup.python_path)
@@ -73,7 +74,7 @@ def roleSwitch(round_setup):
     global role_switched
     global winA
     global winB
-    if main_timer.getTime() > 600:     # Check if it's time to end round
+    if main_timer.getTime() > 300:     # Check if it's time to end round
         print("Dit is het einde van deze ronde")
         role_switched = True  # Ensure roles are only switched once
         visual.TextStim(winA, text=round_setup.switch, color="white", height=40).draw()
@@ -262,7 +263,7 @@ if round_setup.prompts:
         visual.TextStim(winB, text=prompt, color="white", height=40).draw()
         winA.flip()  
         winB.flip()  
-        waitOrButtons(time=600, button=setup.allowed_keys.keys()) # 10 minutes or button
+        waitOrButtons(wait_time=600, buttons=list(setup.allowed_keys.keys())) # 10 minutes or button
         setup.audio_player.pause()
         # sound_player.stop()
 
@@ -282,13 +283,13 @@ if result1 and result2:
 rt_clock = core.Clock()
 
 # Iterate through each trial in the Excel sheet
-def go_trial():
+async def go_trial():
     trial_timer = core.Clock()
 
     print("Playing trials")
     if not setup.no_obs:
-        setup.obs.send_name_obs(setup.output_folder, "dyad_" + dyad_number + "_round_" + round_number)
-        setup.obs.send_start_record_obs()
+        await setup.obs.send_name_obs("dyad_" + dyad_number + "_round_" + round_number)
+        await setup.obs.send_start_record_obs()
 
     for trial_number, trial in enumerate(round_setup.stims):
         # Play the background noise
@@ -355,19 +356,19 @@ def go_trial():
         csv_writer.write_row([("round_number", round_number), ("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", rt), ("noise_type", selected_noise)])
 
         roleSwitch(round_setup)
-        if trial_timer > 600:
+        if trial_timer.getTime() >= 600:
             break
     
     # End the round
     setup.audio_player.stop()
     if not setup.no_obs:
-        setup.obs.send_stop_record_obs()
-        setup.obs.send_request_file_obs()
+        await setup.obs.send_stop_record_obs()
+        await setup.obs.send_request_file_obs()
 
 # Iterate through each trial in the Excel sheet
 try:
     if round_setup.play_trial:
-        go_trial()
+        asyncio.run(go_trial())
     else:
         print("No trials to play")
 except Exception as e:
@@ -375,14 +376,14 @@ except Exception as e:
     setup.audio_player.stop()
     # sound_player.stop()
     if not setup.no_obs:
-        setup.obs.send_stop_record_obs()
-        setup.obs.send_request_file_obs()
+        asyncio.run(setup.obs.send_stop_record_obs())
+        asyncio.run(setup.obs.send_request_file_obs())
 except KeyboardInterrupt:
     setup.audio_player.stop()
     # sound_player.stop()
     if not setup.no_obs:
-        setup.obs.send_stop_record_obs()
-        setup.obs.send_request_file_obs()
+        asyncio.run(setup.obs.send_stop_record_obs())
+        asyncio.run(setup.obs.send_request_file_obs())
 
 # Close windows
 winA.close()
