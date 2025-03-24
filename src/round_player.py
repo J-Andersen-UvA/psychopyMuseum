@@ -235,7 +235,7 @@ if round_setup.prompts:
         visual.TextStim(winB, text=prompt, color="white", height=40).draw()
         winA.flip()  
         winB.flip()  
-        waitOrButtons(2, button="return")
+        waitOrButtons(2)
         waitOrButtons(wait_time=600, buttons=list(setup.allowed_keys.keys())) # 10 minutes or button
         setup.audio_player.pause()
         # sound_player.stop()
