@@ -229,6 +229,9 @@ main_timer = core.Clock()
 
 # play prompts (only for for round 1)
 if round_setup.prompts:
+    round1_timer = core.Clock()
+    if not setup.no_obs:
+        asyncio.run(setup.obs.send_start_record_obs())
     for prompt in round_setup.prompts:
         play_noise()
         visual.TextStim(winA, text=prompt, color="white", height=40).draw()
@@ -236,9 +239,15 @@ if round_setup.prompts:
         winA.flip()  
         winB.flip()  
         waitOrButtons(2)
-        waitOrButtons(wait_time=600, buttons=list(setup.allowed_keys.keys())) # 10 minutes or button
+        waitOrButtons(wait_time=600-round1_timer.getTime(), buttons=list(setup.allowed_keys.keys())) # 10 minutes or button
         setup.audio_player.pause()
-        # sound_player.stop()
+        if round1_timer.getTime() >= 600:
+            break
+    if not setup.no_obs:
+        asyncio.run(setup.obs.send_stop_record_obs())
+        asyncio.run(setup.obs.send_request_file_obs())
+    
+    
 
 #  # load background image
 # result1 = imageShower.show_image(round_setup.img4_background, winA, size=(700, 700))
