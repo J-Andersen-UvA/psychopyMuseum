@@ -83,21 +83,6 @@ def roleSwitch(round_setup):
         winB.flip()
         waitOrButton()
 
-def endRound():
-    global winA
-    global winB
-    if main_timer.getTime() > 600 and round_setup.role_switch and not role_switched:     # Check if it's time to switch roles 
-        print("De rollen zijn nu omgedraaid")
-        role_switched = True  # Ensure roles are only switched once
-        visual.TextStim(winA, text=round_setup.switch, color="white", height=40).draw()
-        winA.flip()
-        visual.TextStim(winB, text=round_setup.switch, color="white", height=40).draw()
-        winB.flip()
-        winA.close() # Close windows
-        winB.close()
-        core.quit() # Exit experiment
-
-
 # Add dyad number
 dyad_nr_text = "Dyad: "
 dyad_number = ""
@@ -263,6 +248,7 @@ if round_setup.prompts:
         visual.TextStim(winB, text=prompt, color="white", height=40).draw()
         winA.flip()  
         winB.flip()  
+        waitOrButton(2, button="return")
         waitOrButtons(wait_time=600, buttons=list(setup.allowed_keys.keys())) # 10 minutes or button
         setup.audio_player.pause()
         # sound_player.stop()
