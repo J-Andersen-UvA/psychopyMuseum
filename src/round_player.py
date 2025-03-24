@@ -1,17 +1,17 @@
 from psychopy import visual, core, event
-import csvManager
+import helpers.csvManager as csvManager
 from psychopy.hardware import keyboard
 from psychopy.hardware import mouse as mouse
 import os
 from random import shuffle
-import imageShower as imageShower
-import general_setup as gs
-import round_setup as rs
+import helpers.imageShower as imageShower
+import setup.general_setup as gs
+import setup.round_setup as rs
 import asyncio
 setup = gs.ExperimentSetup()
 # from sound_player import SoundPlayer
 # sound_player = SoundPlayer(python_path=setup.python_path)
-import popUp
+import helpers.popUp as popUp
 popUp = popUp.PopUp()
 # Initialize keyboard
 kb = keyboard.Keyboard()
@@ -222,7 +222,7 @@ visual.TextStim(winA,text=round_setup.instr, height=30).draw()
 visual.TextStim(winB,text=round_setup.instr, height=30).draw()
 winA.flip()
 winB.flip()
-waitOrButtons(time=600, buttons=list(setup.allowed_keys.keys()))
+waitOrButtons(wait_time=600, buttons=list(setup.allowed_keys.keys()))
 
 # Start a timer
 main_timer = core.Clock()
@@ -235,7 +235,7 @@ if round_setup.prompts:
         visual.TextStim(winB, text=prompt, color="white", height=40).draw()
         winA.flip()  
         winB.flip()  
-        waitOrButtons(2, button="return")
+        waitOrButtons(2)
         waitOrButtons(wait_time=600, buttons=list(setup.allowed_keys.keys())) # 10 minutes or button
         setup.audio_player.pause()
         # sound_player.stop()
@@ -244,13 +244,13 @@ if round_setup.prompts:
 # result1 = imageShower.show_image(round_setup.img4_background, winA, size=(700, 700))
 # result2 = imageShower.show_image(round_setup.img4_background, winB, size=(700, 700))
 # if result1 and result2:
-#     waitOrButtons(time=600, buttons=list(setup.allowed_keys.keys()))
+#     waitOrButtons(wait_time=600, buttons=list(setup.allowed_keys.keys()))
 
 # # zoom in background image
 # result1 = imageShower.show_image(round_setup.img4_background, winA, pos=(0,-70), size=(1100, 1100))
 # result2 = imageShower.show_image(round_setup.img4_background, winB, pos=(0,-70), size=(1100, 1100))
 # if result1 and result2:
-#     waitOrButtons(time=600, buttons=list(setup.allowed_keys.keys()))
+#     waitOrButtons(wait_time=600, buttons=list(setup.allowed_keys.keys()))
 
  # Create a response clock
 rt_clock = core.Clock()
@@ -279,7 +279,7 @@ async def go_trial():
             visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
             winA.flip()
             winB.flip()
-            waitOrButtons(time=600, buttons=list(setup.allowed_keys.keys()))
+            waitOrButtons(wait_time=600, buttons=list(setup.allowed_keys.keys()))
 
         # Load img4 as the background
         imageShower.show_image(round_setup.img4_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)

@@ -1,6 +1,6 @@
 import yaml
 import os
-import popUp
+import helpers.popUp as popUp
 from OBSRecorder.src.src_sendAndReceive.receiveFiles import run_receiver_in_new_terminal
 from audioPlayerPy.PyAudioPlayer import PyAudioPlayer as AudioPlayer
 import websockets

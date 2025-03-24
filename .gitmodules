@@ -1,6 +1,6 @@
 [submodule "src/OBSRecorder"]
 	path = src/OBSRecorder
 	url = https://github.com/J-Andersen-UvA/OBSRecorder
-[submodule "audioPlayerPy"]
-	path = audioPlayerPy
+[submodule "src/audioPlayerPy"]
+	path = src/audioPlayerPy
 	url = https://github.com/J-Andersen-UvA/audioPlayerPy.git

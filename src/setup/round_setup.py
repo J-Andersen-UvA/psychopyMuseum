@@ -1,6 +1,6 @@
 import yaml
 import os
-import popUp
+import helpers.popUp as popUp
 popUp = popUp.PopUp()
 from psychopy import data
 from random import shuffle
@@ -8,7 +8,7 @@ from random import shuffle
 class RoundSetup:
     def __init__(self, round_number):
         # Load the YAML configuration file
-        with open("src/roundconfig" + str(round_number) + ".yaml", 'r') as f:
+        with open("src/setup/roundconfig" + str(round_number) + ".yaml", 'r') as f:
             self.round = yaml.safe_load(f)
 
             # All texts to be displayed
