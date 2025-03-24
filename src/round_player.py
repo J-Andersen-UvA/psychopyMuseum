@@ -58,15 +58,29 @@ def roleSwitch(round_setup):
     global role_switched
     global winA
     global winB
-    if main_timer.getTime() > 10 and round_setup.role_switch and not role_switched:     # Check if it's time to switch roles 
-        print("De rollen zijn nu omgedraaid")
+    if main_timer.getTime() > 600:     # Check if it's time to end round
+        print("Dit is het einde van deze ronde")
         role_switched = True  # Ensure roles are only switched once
         visual.TextStim(winA, text=round_setup.switch, color="white", height=40).draw()
         winA.flip()
         visual.TextStim(winB, text=round_setup.switch, color="white", height=40).draw()
         winB.flip()
         waitOrButton()
-        winA, winB = winB, winA  # Swap the windows
+
+def endRound():
+    global winA
+    global winB
+    if main_timer.getTime() > 600 and round_setup.role_switch and not role_switched:     # Check if it's time to switch roles 
+        print("De rollen zijn nu omgedraaid")
+        role_switched = True  # Ensure roles are only switched once
+        visual.TextStim(winA, text=round_setup.switch, color="white", height=40).draw()
+        winA.flip()
+        visual.TextStim(winB, text=round_setup.switch, color="white", height=40).draw()
+        winB.flip()
+        winA.close() # Close windows
+        winB.close()
+        core.quit() # Exit experiment
+
 
 # Add dyad number
 dyad_nr_text = "Dyad: "
@@ -144,7 +158,7 @@ while True:
     core.wait(0.01)
 
 # create output file for button presses 
-output_file = os.path.join(setup.output_folder, f"dyad_{dyad_number}_round_{round_number}")
+output_file = os.path.join(setup.output_folder, f"hh_dyad_{dyad_number}_round_{round_number}") # change to nh later, there is surely a smoother way but that's it for now
 # Check if the file already exists
 if os.path.exists(output_file + ".csv"):
     popUp.show_warning_then_exit(
@@ -233,7 +247,7 @@ if round_setup.prompts:
         visual.TextStim(winB, text=prompt, color="white", height=40).draw()
         winA.flip()  
         winB.flip()  
-        waitOrButton(600)
+        waitOrButton(time=600,button='s' or 'w' or 'a' or 'd') # 10 minutes or button
         setup.audio_player.pause()
         # sound_player.stop()
 
@@ -324,6 +338,7 @@ def go_trial():
         csv_writer.write_row([("round_number", round_number), ("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", rt), ("noise_type", selected_noise)])
 
         roleSwitch(round_setup)
+        endRound()
     
     if not setup.no_obs:
         setup.obs.send_stop_record_obs()
