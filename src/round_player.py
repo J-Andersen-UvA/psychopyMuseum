@@ -288,6 +288,8 @@ async def go_trial():
             visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
             winA.flip()
             winB.flip()
+            # Don't accept multiple key presses
+            waitOrButtons(wait_time=1, buttons=[""])
             waitOrButtons(wait_time=600, buttons=list(setup.allowed_keys.keys()))
 
         # Load img4 as the background
@@ -316,6 +318,9 @@ async def go_trial():
 
         # Reset clock
         rt_clock.reset()
+
+        # Don't accept multiple key presses
+        waitOrButtons(wait_time=1, buttons=[""])
 
         # Wait for a valid button press to continue
         button_pressed = ''
