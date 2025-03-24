@@ -25,6 +25,21 @@ def ShowTargetImage(trial, round_setup):
     target_img_path = os.path.join(round_setup.img_folder, img_name)
     imageShower.show_image(target_img_path, winA, pos=(1,23), size=(485,485), flip=False)
 
+def waitOrButtons(wait_time=600, buttons=["return"]):
+    """
+    Waits for a certain time (in seconds) or until a button (enter) is pressed
+    """
+    buttonTime = core.Clock()
+
+    print(f"Press {buttons} to continue or wait for {wait_time} seconds")
+    while buttonTime.getTime() < wait_time:  # 10 minutes (600s)
+        keys = kb.getKeys()  # Check for keypresses
+        for button in buttons:
+            if button in keys:  # return = enter
+                print("Button pressed")
+                return
+    print("Time is up")
+
 def waitOrButton(wait_time=600, button="return"):
     """
     Waits for a certain time (in seconds) or until a button (enter) is pressed
@@ -247,7 +262,7 @@ if round_setup.prompts:
         visual.TextStim(winB, text=prompt, color="white", height=40).draw()
         winA.flip()  
         winB.flip()  
-        waitOrButton(time=600,button='s' or 'w' or 'a' or 'd') # 10 minutes or button
+        waitOrButtons(time=600, button=setup.allowed_keys.keys()) # 10 minutes or button
         setup.audio_player.pause()
         # sound_player.stop()
 
@@ -268,6 +283,8 @@ rt_clock = core.Clock()
 
 # Iterate through each trial in the Excel sheet
 def go_trial():
+    trial_timer = core.Clock()
+
     print("Playing trials")
     if not setup.no_obs:
         setup.obs.send_name_obs(setup.output_folder, "dyad_" + dyad_number + "_round_" + round_number)
@@ -338,8 +355,11 @@ def go_trial():
         csv_writer.write_row([("round_number", round_number), ("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", rt), ("noise_type", selected_noise)])
 
         roleSwitch(round_setup)
-        endRound()
+        if trial_timer > 600:
+            break
     
+    # End the round
+    setup.audio_player.stop()
     if not setup.no_obs:
         setup.obs.send_stop_record_obs()
         setup.obs.send_request_file_obs()
