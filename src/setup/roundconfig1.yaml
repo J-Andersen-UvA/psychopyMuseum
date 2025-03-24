@@ -1,5 +1,5 @@
 texts:
-    instr: "In deze opdracht zien jullie een gespreksonderwerp op het scherm. Gebruik deze als inspiratie voor een gesprek en praat er vrijuit over. Als jullie het gevoel hebben dat er niets meer is om over te praten, druk dan op een knop op de buttonbox en er verschijnen nieuwe gespreksonderwerpen."
+    instr: "In deze opdracht zien jullie een gespreksonderwerp op het scherm. Gebruik deze als inspiratie voor een gesprek en praat er vrijuit over. Als jullie het gevoel hebben dat er niets meer is om over te praten, druk dan op een knop op de buttonbox en er verschijnen nieuwe gespreksonderwerpen.\nDruk op een knop om te beginnen."
     switch: null
 
 prompts:

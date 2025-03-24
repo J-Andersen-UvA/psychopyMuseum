@@ -1,5 +1,5 @@
 texts:
-    instr: "In deze opdracht kijken jullie naar verschillende schermen. Een van jullie ziet een abstract schilderij, terwijl de anderen vier schilderijen op het scherm zien. Het is jullie taak om samen te overleggen en voor degene die een schilderij ziet, om het zo te beschrijven dat de andere het juiste schilderij uit de vier schilderijen kan kiezen. Als jullie dat hebben besloten, gebruiken jullie het knoppenvak om een schilderij te selecteren. Vervolgens verschijnt de volgende beschrijving. Jullie wisselen van rol na de helft van de tijd."
+    instr: "In deze opdracht kijken jullie naar verschillende schermen. Een van jullie ziet een abstract schilderij, terwijl de andere vier schilderijen op het scherm zien. Het is jullie taak om samen te overleggen en voor degene die een schilderij ziet, om het zo te beschrijven dat de andere het juiste schilderij uit de vier schilderijen kan kiezen. Als jullie dat hebben besloten, gebruiken jullie de knoppen om een schilderij te selecteren. Vervolgens verschijnt de volgende beschrijving. Jullie wisselen van rol na de helft van de tijd.\nDruk op een knop om te beginnen."
     switch: "De rollen zijn nu omgedraaid"
 
 images:
