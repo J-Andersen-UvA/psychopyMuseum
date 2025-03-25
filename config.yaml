@@ -10,21 +10,22 @@ window:
   fullscreen: True
 
 # define screens for windows
-winA: 1
-winB: 2
+winA: 2
+winB: 3
 
 files:
   output_folder: "output/"
-  noise_soc: "C:\\Users\\apalman\\OneDrive - UvA\\Desktop\\noise_files\\background_noise_30.wav"
-  noise_nonsoc: "C:\\Users\\apalman\\OneDrive - UvA\\Desktop\\noise_files\\pink_noise_30.wav"
+  # noise_soc: "C:\\Users\\apalman\\OneDrive - UvA\\Desktop\\noise_files\\background_noise_30.wav"
+  # noise_nonsoc: "C:\\Users\\apalman\\OneDrive - UvA\\Desktop\\noise_files\\pink_noise_30.wav"
 # Jari PC paths:
-# noise_soc: "C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\background_noise_30.wav"
-# noise_nonsoc: "C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\pink_noise_30.wav"
+  noise_soc: ["C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\background_noise_30.wav", 3.0]
+  noise_nonsoc: ["C:\\Users\\VICON\\Desktop\\Code\\psychopyMuseum\\psychopyMuseum\\noise_folder\\pink_noise_30.wav", 1.0]
 
 # Anna PC paths
 # noise_soc: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/background_noise_30"
 # noise_nonsoc: "C:/Users/apalman/OneDrive - UvA/Desktop/noise_files/pink_noise_30"
 
+no_obs: False
 
 input:
   key_1: "a"
@@ -37,11 +38,10 @@ timing:
   instructions_duration: 30
   description_duration: 5
 
-no_obs: True
 
 obs_host:
   target_host: "192.168.0.166" # ip address of my pc
-  target_port: 4444
+  target_port: 4422
 
 # Of the location to send the files to after they are recorded
 receiver_machine:
@@ -56,8 +56,8 @@ receiver_machine:
 #   obs_password:
 
 #Jari paths
-#python_path: 'C:/Users/VICON/Desktop/Code/psychopyMuseum/psychopyMuseum/psychopy_env/Scripts/python.exe'
+python_path: 'C:/Users/VICON/Desktop/Code/psychopyMuseum/psychopyMuseum/psychopy_env/Scripts/python.exe'
 receiver_script_path: 'C:\Users\VICON\Desktop\Code\OBSRecorder\OBSRecorder\src\src_sendAndReceive\receiveFiles.py'
 
 #Anna paths
-python_path: "C:/Program Files/Python39/python.exe"
+# python_path: "C:/Program Files/Python39/python.exe"

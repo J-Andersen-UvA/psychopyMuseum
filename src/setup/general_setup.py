@@ -34,7 +34,8 @@ class ExperimentSetup:
 
         # File paths
         self.output_folder = os.path.abspath(self.config["files"]["output_folder"])
-        self.noise_soc = self.config["files"]["noise_soc"]
+        self.noise_soc, self.noise_soc_volume = self.config["files"]["noise_soc"]
+        self.noise_nonsoc, self.noise_nonsoc_volume = self.config["files"]["noise_nonsoc"]
         self.noise_nonsoc = self.config["files"]["noise_nonsoc"]
 
         # Keyboard

@@ -198,10 +198,10 @@ while True:
 def play_noise():
     if not setup.audio_player.isPlaying():
         if selected_noise == 'soc':
-            setup.audio_player.play(setup.noise_soc)
+            setup.audio_player.play(setup.noise_soc, setup.noise_soc_volume)
             # sound_player.play(setup.noise_soc)
         elif selected_noise == 'nonsoc':
-            setup.audio_player.play(setup.noise_nonsoc)
+            setup.audio_player.play(setup.noise_nonsoc, setup.noise_nonsoc_volume)
             # sound_player.play(setup.noise_nonsoc)
     else:
         setup.audio_player.play()
