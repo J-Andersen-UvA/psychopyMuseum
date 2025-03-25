@@ -57,17 +57,19 @@ winB = visual.Window(
     fullscr=setup.fullscreen,
     screen=setup.screenB)
 
-def roleSwitch(round_setup):
+def roleSwitch(round_setup, max, cur):
     global role_switched
+    global main_timer
     global winA
     global winB
-    if main_timer.getTime() > 300 and round_setup.role_switch:     # Check if it's time to end round
+    if (main_timer.getTime() > 300 and round_setup.role_switch and not role_switched) or (max/2 <= cur and not role_switched and round_setup.role_switch):     # Check if it's time to end round
         print("Dit is het einde van deze ronde")
         role_switched = True  # Ensure roles are only switched once
         visual.TextStim(winA, text=round_setup.switch, color="white", height=40).draw()
         winA.flip()
         visual.TextStim(winB, text=round_setup.switch, color="white", height=40).draw()
         winB.flip()
+        winA, winB = winB, winA
         waitOrButtons()
 
 # Add dyad number
@@ -198,10 +200,10 @@ while True:
 def play_noise():
     if not setup.audio_player.isPlaying():
         if selected_noise == 'soc':
-            setup.audio_player.play(setup.noise_soc)
+            setup.audio_player.play(setup.noise_soc, setup.noise_soc_volume)
             # sound_player.play(setup.noise_soc)
         elif selected_noise == 'nonsoc':
-            setup.audio_player.play(setup.noise_nonsoc)
+            setup.audio_player.play(setup.noise_nonsoc, setup.noise_nonsoc_volume)
             # sound_player.play(setup.noise_nonsoc)
     else:
         setup.audio_player.play()
@@ -273,6 +275,8 @@ async def go_trial():
         await setup.obs.send_name_obs("dyad_" + dyad_number + "_round_" + round_number)
         await setup.obs.send_start_record_obs()
 
+    amount_of_rounds = len(round_setup.stims)
+
     for trial_number, trial in enumerate(round_setup.stims):
         # Play the background noise
         play_noise()
@@ -288,6 +292,8 @@ async def go_trial():
             visual.TextStim(winB, text=desc_text, color="#F5F5DC", colorSpace='hex', height=30, pos=(0, 20), wrapWidth=450).draw()
             winA.flip()
             winB.flip()
+            # Don't accept multiple key presses
+            waitOrButtons(wait_time=1, buttons=[""])
             waitOrButtons(wait_time=600, buttons=list(setup.allowed_keys.keys()))
 
         # Load img4 as the background
@@ -317,17 +323,15 @@ async def go_trial():
         # Reset clock
         rt_clock.reset()
 
+        # Don't accept multiple key presses
+        kb.clearEvents()
+        core.wait(1)
+        kb.clearEvents()
+
         # Wait for a valid button press to continue
-        button_pressed = ''
-        print(setup.allowed_keys.keys())
-        while button_pressed not in setup.allowed_keys.keys():
-            keys = kb.getKeys()
-            for key in setup.allowed_keys.keys():
-                if key in keys:
-                    button_pressed = key
-                    rt = rt_clock.getTime()
-                    break
-            core.wait(0.01)  # Add a small delay
+        keys = kb.waitKeys(keyList=setup.allowed_keys.keys())
+        rt = rt_clock.getTime()
+        button_pressed = keys[0].value
             
         # Stop the noise after the trial is done
         setup.audio_player.pause()
@@ -337,8 +341,9 @@ async def go_trial():
         selected_image = images[setup.allowed_keys[button_pressed]]
         csv_writer.write_row([("round_number", round_number), ("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", rt), ("noise_type", selected_noise)])
 
-        roleSwitch(round_setup)
+        roleSwitch(round_setup, amount_of_rounds, trial_number)
         if trial_timer.getTime() >= 600:
+            print("Time is up, ending the round")
             break
     
     # End the round
@@ -354,7 +359,7 @@ try:
     else:
         print("No trials to play")
 except Exception as e:
-    print(e)
+    print(f"Exception: {e}")
     setup.audio_player.stop()
     # sound_player.stop()
     if not setup.no_obs:

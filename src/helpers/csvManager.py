@@ -50,11 +50,11 @@ class CSVWriter:
     def get_headers(self):
         return self.headers
 
-# Example usage
-headers = ["dyad_number", "trial_number", "target_img", "selected_img", "accuracy", "reaction_time"]
-os.makedirs("output", exist_ok=True)
-csv_writer = CSVWriter("output/data.csv", headers)
+# # Example usage
+# headers = ["dyad_number", "trial_number", "target_img", "selected_img", "accuracy", "reaction_time"]
+# os.makedirs("output", exist_ok=True)
+# csv_writer = CSVWriter("output/data.csv", headers)
 
-# Writing test data
-csv_writer.write_row([("dyad_number", 1), ("trial_number", 101), ("target_img", "image1.jpg"), ("selected_img", "image2.jpg"), ("accuracy", 1), ("reaction_time", 2.5)])
-csv_writer.write_row([("dyad_number", 2), ("trial_number", 102), ("target_img", "image3.jpg"), ("selected_img", "image3.jpg"), ("accuracy", 1), ("reaction_time", 1.8)])
+# # Writing test data
+# csv_writer.write_row([("dyad_number", 1), ("trial_number", 101), ("target_img", "image1.jpg"), ("selected_img", "image2.jpg"), ("accuracy", 1), ("reaction_time", 2.5)])
+# csv_writer.write_row([("dyad_number", 2), ("trial_number", 102), ("target_img", "image3.jpg"), ("selected_img", "image3.jpg"), ("accuracy", 1), ("reaction_time", 1.8)])
