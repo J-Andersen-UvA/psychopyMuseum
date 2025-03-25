@@ -9,7 +9,7 @@ images:
   text_background: "museumImages/museum_text.jpeg"
 
 stimuli:
-    stim_file: "stim_folder/stimuli_round2_new.xlsx"
+    stim_file: "stim_folder/stimuli_round2.xlsx"
 
 role_switch: False
 show_target: False
