@@ -193,7 +193,9 @@ while True:
             selected_noise = 'soc'
         elif key.name == 'n':
             selected_noise = 'nonsoc'
-    if 's' in [key.name for key in keys] or 'n' in [key.name for key in keys]:
+        elif key.name == 'x':
+            selected_noise = 'silence'
+    if 's' in [key.name for key in keys] or 'n' in [key.name for key in keys] or 'x' in [key.name for key in keys]:
         break
     core.wait(0.01)
 
@@ -205,6 +207,8 @@ def play_noise():
         elif selected_noise == 'nonsoc':
             setup.audio_player.play(setup.noise_nonsoc, setup.noise_nonsoc_volume)
             # sound_player.play(setup.noise_nonsoc)
+        elif selected_noise == 'silence':
+            return
     else:
         setup.audio_player.play()
     return
