@@ -2,6 +2,7 @@ import yaml
 import os
 import helpers.popUp as popUp
 from OBSRecorder.src.src_sendAndReceive.receiveFiles import run_receiver_in_new_terminal
+import OBSRecorder.src.obsRecording as obsRecording
 from audioPlayerPy.PyAudioPlayer import PyAudioPlayer as AudioPlayer
 import websockets
 
@@ -43,8 +44,10 @@ class ExperimentSetup:
         # self.key_3 = self.config["input"]["key_3"]
         # self.key_4 = self.config["input"]["key_4"]
         self.allowed_keys = {}
-        for i, key in enumerate(self.config["input"]):
+        for i, key in enumerate(self.config["input"], start=0):
             self.allowed_keys[self.config["input"][key]] = i
+
+        print(f"[GEN SETUP] self.allowed_keys:{self.allowed_keys}")
 
         # Timing
         self.intro_duration = self.config["timing"]["intro_duration"]
@@ -63,30 +66,36 @@ class ExperimentSetup:
 
     class OBSConnection:
         def __init__(self, config):
-            self.receiver_machine_ip = config["receiver_machine"]["ip"]
-            self.receiver_machine_port = config["receiver_machine"]["port"]
-            self.python_path = config["python_path"]
-            self.receiver_script_path = config["receiver_script_path"]
+            # self.receiver_machine_ip = config["receiver_machine"]["ip"]
+            # self.receiver_machine_port = config["receiver_machine"]["port"]
+            # self.python_path = config["python_path"]
+            # self.receiver_script_path = config["receiver_script_path"]
             self.output_folder = os.path.abspath(config["files"]["output_folder"])
-            run_receiver_in_new_terminal(self.receiver_machine_ip, self.receiver_machine_port, self.output_folder + "\\video", self.receiver_script_path, self.python_path)
+            # run_receiver_in_new_terminal(self.receiver_machine_ip, self.receiver_machine_port, self.output_folder + "\\video", self.receiver_script_path, self.python_path)
 
             self.obs_target_host = config["obs_host"]["target_host"]
             self.obs_target_port = config["obs_host"]["target_port"]
-            self.obs_ws = f"ws://{self.obs_target_host}:{self.obs_target_port}"
+            # self.obs_ws = f"ws://{self.obs_target_host}:{self.obs_target_port}"
+            self.obs = obsRecording.OBSController(self.obs_target_host, self.obs_target_port, None, popUp=popUp)
+            self.obs.set_record_directory(self.output_folder)
+            self.obs.set_buffer_folder(config["files"]["obs_buffer_folder"])
 
         async def send_message_obs(self, message):
             async with websockets.connect(self.obs_ws) as websocket:
                 await websocket.send(message)
                 print(f"Sent message: {message}")
 
-        async def send_name_obs(self, name):
-            await self.send_message_obs(f"SetName {name}")
+        def send_name_obs(self, name):
+            self.obs.set_save_location(self.output_folder, name)
+            # await self.send_message_obs(f"SetName {name}")
 
-        async def send_start_record_obs(self):
-            await self.send_message_obs("Start")
+        def send_start_record_obs(self):
+            self.obs.start_recording()
+            # await self.send_message_obs("Start")
 
-        async def send_stop_record_obs(self):
-            await self.send_message_obs("Stop")
+        def send_stop_record_obs(self):
+            self.obs.stop_recording()
+            # await self.send_message_obs("Stop")
 
         async def send_request_file_obs(self):
             await self.send_message_obs(f"SendFilePrevious {self.receiver_machine_ip} {self.receiver_machine_port}")

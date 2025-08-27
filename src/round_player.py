@@ -8,6 +8,8 @@ import helpers.imageShower as imageShower
 import setup.general_setup as gs
 import setup.round_setup as rs
 import asyncio
+import threading
+import buttonwebsite.buttonServer as bs
 setup = gs.ExperimentSetup()
 # from sound_player import SoundPlayer
 # sound_player = SoundPlayer(python_path=setup.python_path)
@@ -16,8 +18,16 @@ popUp = popUp.PopUp()
 # Initialize keyboard
 kb = keyboard.Keyboard()
 role_switched = False
+buttonInfo = bs.ButtonApp()
+flask_thread = threading.Thread(
+    target=buttonInfo.run,
+    kwargs={"host": "0.0.0.0", "port": 5000, "debug": False},
+    daemon=True
+)
+flask_thread.start()
 
 def ShowTargetImage(trial, round_setup):
+    winA.flip(clearBuffer=True)
     # load img1 as the background
     imageShower.show_image(round_setup.img1_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
     # load and display one image
@@ -26,20 +36,43 @@ def ShowTargetImage(trial, round_setup):
     target_img_path = os.path.join(round_setup.img_folder, img_name)
     imageShower.show_image(target_img_path, winA, pos=(1,23), size=(485,485), flip=False)
 
-def waitOrButtons(wait_time=600, buttons=["return"]):
-    """
-    Waits for a certain time (in seconds) or until a button (enter) is pressed
-    """
+# def waitOrButtons(wait_time=600, buttons=["return"]):
+#     """
+#     Waits for a certain time (in seconds) or until a button (enter) is pressed
+#     """
+#     buttonTime = core.Clock()
+
+#     print(f"Press {buttons} to continue or wait for {wait_time} seconds")
+#     while buttonTime.getTime() < wait_time:  # 10 minutes (600s)
+#         keys = kb.getKeys()  # Check for keypresses
+#         for button in buttons:
+#             if button in keys:  # return = enter
+#                 print(f"Button pressed {button}")
+#                 return button
+#         core.wait(0.01)
+#     print("Time is up")
+
+def waitOrButtons(wait_time=600, buttons=["return"], reset_button_server=True):
     buttonTime = core.Clock()
 
+    if reset_button_server:
+        buttonInfo.last_pressed = None
+
     print(f"Press {buttons} to continue or wait for {wait_time} seconds")
-    while buttonTime.getTime() < wait_time:  # 10 minutes (600s)
-        keys = kb.getKeys()  # Check for keypresses
-        for button in buttons:
-            if button in keys:  # return = enter
-                print("Button pressed")
-                return
-    print("Time is up")
+    while buttonTime.getTime() < wait_time:
+        keys = kb.getKeys()
+        if buttonInfo.last_pressed != None and buttonInfo.last_pressed in buttons:
+            print(f"Button pressed {buttonInfo.last_pressed}, resetting buttonInfo")
+            button = buttonInfo.last_pressed
+            buttonInfo.last_pressed = None
+            return button
+        else:
+            for button in buttons:
+                if button in keys:
+                    print(f"Button pressed {button}")
+                    return button
+        core.wait(0.01)
+    print("WaitOrButton time is up.")
 
 
 # create windows
@@ -228,7 +261,7 @@ visual.TextStim(winA,text=round_setup.instr, height=30).draw()
 visual.TextStim(winB,text=round_setup.instr, height=30).draw()
 winA.flip()
 winB.flip()
-waitOrButtons(wait_time=600, buttons=list(setup.allowed_keys.keys()))
+waitOrButtons(wait_time=60, buttons=list(setup.allowed_keys.keys()))
 
 # Start a timer
 main_timer = core.Clock()
@@ -237,7 +270,9 @@ main_timer = core.Clock()
 if round_setup.prompts:
     round1_timer = core.Clock()
     if not setup.no_obs:
-        asyncio.run(setup.obs.send_start_record_obs())
+        setup.obs.send_name_obs("dyad_" + dyad_number + "_round_" + round_number)
+        setup.obs.send_start_record_obs()
+        # asyncio.run(setup.obs.send_start_record_obs())
     for prompt in round_setup.prompts:
         play_noise()
         visual.TextStim(winA, text=prompt, color="white", height=40).draw()
@@ -250,8 +285,9 @@ if round_setup.prompts:
         if round1_timer.getTime() >= 600:
             break
     if not setup.no_obs:
-        asyncio.run(setup.obs.send_stop_record_obs())
-        asyncio.run(setup.obs.send_request_file_obs())
+        setup.obs.send_stop_record_obs()
+        # asyncio.run(setup.obs.send_stop_record_obs())
+        # asyncio.run(setup.obs.send_request_file_obs())
     
     
 
@@ -276,8 +312,10 @@ async def go_trial():
 
     print("Playing trials")
     if not setup.no_obs:
-        await setup.obs.send_name_obs("dyad_" + dyad_number + "_round_" + round_number)
-        await setup.obs.send_start_record_obs()
+        setup.obs.send_name_obs("dyad_" + dyad_number + "_round_" + round_number)
+        setup.obs.send_start_record_obs()
+        # await setup.obs.send_name_obs("dyad_" + dyad_number + "_round_" + round_number)
+        # await setup.obs.send_start_record_obs()
 
     amount_of_rounds = len(round_setup.stims)
 
@@ -298,52 +336,67 @@ async def go_trial():
             winB.flip()
             # Don't accept multiple key presses
             waitOrButtons(wait_time=1, buttons=[""])
-            waitOrButtons(wait_time=600, buttons=list(setup.allowed_keys.keys()))
+            waitOrButtons(wait_time=40, buttons=list(setup.allowed_keys.keys()))
 
+        print("[Trial] Clearing screen...")
+        winA.flip(clearBuffer=True)
+        winB.flip(clearBuffer=True)
+
+        print("[Trial] Loading background...")
         # Load img4 as the background
-        imageShower.show_image(round_setup.img4_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
+        if not round_setup.show_target:
+            imageShower.show_image(round_setup.img4_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
         imageShower.show_image(round_setup.img4_background, winB, pos=(0,-50), size=(1000, 1000), flip=False)
 
+        print("[Trial] Loading stim images...")
         # Load and display the 4 images
         images = [trial['stim1'], trial['stim2'], trial['stim3'], trial['stim4']]
         positions = [(-138, 184), (141, 184), (-138, -107), (141, -107)]  
         size = (238, 238) 
 
+        print("[Trial] Shuffling images...")
         # Shuffle positions to counterbalance
         shuffle(images)
 
         # get path of images
         path_images = [os.path.join(round_setup.img_folder, image) for image in images]
 
+        print("[Trial] Showing multiple images...")
         # show shuffled images
-        imageShower.show_multiple_images(path_images, winA, positions, size, show_tags=True, flip=False)
+        if not round_setup.show_target:
+            imageShower.show_multiple_images(path_images, winA, positions, size, show_tags=True, flip=False)
         imageShower.show_multiple_images(path_images, winB, positions, size, show_tags=True, flip=False)
 
         if round_setup.show_target:
+            print("[Trial] Showing target image...")
             ShowTargetImage(trial, round_setup)
-        winA.flip()
-        winB.flip()
+
+        print("[Trial] Flip wins...")
+        winA.flip(clearBuffer=False)
+        winB.flip(clearBuffer=False)
 
         # Reset clock
         rt_clock.reset()
 
         # Don't accept multiple key presses
-        kb.clearEvents()
-        core.wait(1)
-        kb.clearEvents()
+        # kb.clearEvents()
+        # core.wait(0.1)
+        # kb.clearEvents()
 
         # Wait for a valid button press to continue
-        keys = kb.waitKeys(keyList=setup.allowed_keys.keys())
+        print("[Trial] Awaiting answer...")
+        button_pressed = waitOrButtons(wait_time=6000, buttons=list(setup.allowed_keys.keys()))
         rt = rt_clock.getTime()
-        button_pressed = keys[0].value
-            
+
         # Stop the noise after the trial is done
+        print("[Trial] Pausing noise...")
         setup.audio_player.pause()
         # sound_player.stop()
 
         # Write test data
         selected_image = images[setup.allowed_keys[button_pressed]]
-        csv_writer.write_row([("round_number", round_number), ("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial['stim1']), ("selected_img", selected_image), ("accuracy", trial['stim1']==selected_image), ("reaction_time", rt), ("noise_type", selected_noise)])
+        print(f"[Trial] Writing data to file:\tcorrect:{trial[trial['target_image']]==selected_image}\ttrialtarget_image:{trial[trial['target_image']]}\tselected_image:{selected_image}")
+        csv_writer.write_row([("round_number", round_number), ("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial[trial['target_image']]), ("selected_img", selected_image), ("accuracy", trial[trial['target_image']]==selected_image), ("reaction_time", rt), ("noise_type", selected_noise)])
 
         roleSwitch(round_setup, amount_of_rounds, trial_number)
         if trial_timer.getTime() >= 600:
@@ -353,8 +406,9 @@ async def go_trial():
     # End the round
     setup.audio_player.stop()
     if not setup.no_obs:
-        await setup.obs.send_stop_record_obs()
-        await setup.obs.send_request_file_obs()
+        setup.obs.send_stop_record_obs()
+        # await setup.obs.send_stop_record_obs()
+        # await setup.obs.send_request_file_obs()
 
 # Iterate through each trial in the Excel sheet
 try:
@@ -367,14 +421,16 @@ except Exception as e:
     setup.audio_player.stop()
     # sound_player.stop()
     if not setup.no_obs:
-        asyncio.run(setup.obs.send_stop_record_obs())
-        asyncio.run(setup.obs.send_request_file_obs())
+        setup.obs.send_stop_record_obs()
+        # asyncio.run(setup.obs.send_stop_record_obs())
+        # asyncio.run(setup.obs.send_request_file_obs())
 except KeyboardInterrupt:
     setup.audio_player.stop()
     # sound_player.stop()
     if not setup.no_obs:
-        asyncio.run(setup.obs.send_stop_record_obs())
-        asyncio.run(setup.obs.send_request_file_obs())
+        setup.obs.send_stop_record_obs()
+        # asyncio.run(setup.obs.send_stop_record_obs())
+        # asyncio.run(setup.obs.send_request_file_obs())
 
 # Close windows
 winA.close()

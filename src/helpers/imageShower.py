@@ -45,19 +45,59 @@ def show_image(image_location, window, size=(700, 700), width=720, height=720, l
         print(f"Image not found: {image_location}")
         return False
 
-def show_multiple_images(image_locations, window, positions, size=(212, 212), show_tags=True, flip=True):
-    # Shuffle positions to counterbalance
+# def show_multiple_images(image_locations, window, positions, size=(212, 212), show_tags=True, flip=True):
+#     # Shuffle positions to counterbalance
 
-    # Draw all images
-    for i, image_location in enumerate(image_locations):
-        if os.path.exists(image_location):
-            visual.ImageStim(window, image=image_location, pos=positions[i], size=size).draw()
-            if show_tags:
-                tagx, tagy = positions[i][0] + size[0] / 2 - 30, positions[i][1] - size[1] / 2 + 30  # Adjusting for bottom-right position
-                visual.Rect(window, width=40, height=40, color='black', pos=(tagx, tagy)).draw()
-                visual.TextStim(window, text=str(i+1), color="#F5F5DC", height=30, pos=(tagx, tagy)).draw()
-        else:
-            print(f"Image not found: {image_location}")
+#     # Draw all images
+#     for i, image_location in enumerate(image_locations):
+#         if os.path.exists(image_location):
+#             visual.ImageStim(window, image=image_location, pos=positions[i], size=size).draw()
+#             if show_tags:
+#                 tagx, tagy = positions[i][0] + size[0] / 2 - 30, positions[i][1] - size[1] / 2 + 30  # Adjusting for bottom-right position
+#                 visual.Rect(window, width=40, height=40, color='black', pos=(tagx, tagy)).draw()
+#                 visual.TextStim(window, text=str(i+1), color="#F5F5DC", height=30, pos=(tagx, tagy)).draw()
+#         else:
+#             print(f"Image not found: {image_location}")
+
+#     if flip:
+#         window.flip()
+
+
+def show_multiple_images(image_locations, window, positions,
+                         size=(212, 212), show_tags=True,
+                         flip=True):
+    # --- CACHE LOADING ---
+    # If this is the first time (or image list changed), load & store stims on the window
+    if (not hasattr(window, '_cached_image_paths')
+        or window._cached_image_paths != list(image_locations)):
+        window._cached_image_paths = list(image_locations)
+        window._cached_stims = []
+        for img_path in image_locations:
+            if not os.path.exists(img_path):
+                raise FileNotFoundError(f"Image not found: {img_path}")
+            stim = visual.ImageStim(window,
+                                    image=img_path,
+                                    size=size)
+            window._cached_stims.append(stim)
+
+    # Draw all cached images at the requested positions
+    for i, stim in enumerate(window._cached_stims):
+        stim.pos = positions[i]
+        stim.draw()
+
+        if show_tags:
+            w, h = size
+            tagx = positions[i][0] + w/2 - 30
+            tagy = positions[i][1] - h/2 + 30
+            visual.Rect(window,
+                        width=40, height=40,
+                        fillColor='black',
+                        pos=(tagx, tagy)).draw()
+            visual.TextStim(window,
+                            text=str(i+1),
+                            color="#F5F5DC",
+                            height=30,
+                            pos=(tagx, tagy)).draw()
 
     if flip:
         window.flip()
