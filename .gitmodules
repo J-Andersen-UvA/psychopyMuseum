@@ -4,3 +4,6 @@
 [submodule "src/audioPlayerPy"]
 	path = src/audioPlayerPy
 	url = https://github.com/J-Andersen-UvA/audioPlayerPy.git
+[submodule "src/LLFInterface-main"]
+	path = src/LLFInterface-main
+	url = https://github.com/J-Andersen-UvA/LLFInterface.git

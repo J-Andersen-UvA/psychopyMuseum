@@ -3,13 +3,18 @@ import helpers.csvManager as csvManager
 from psychopy.hardware import keyboard
 from psychopy.hardware import mouse as mouse
 import os
+import csv
 from random import shuffle
 import helpers.imageShower as imageShower
 import setup.general_setup as gs
 import setup.round_setup as rs
+
 import asyncio
 import threading
 import buttonwebsite.buttonServer as bs
+from LiveLinkFace import LiveLinkFaceServer
+
+
 setup = gs.ExperimentSetup()
 # from sound_player import SoundPlayer
 # sound_player = SoundPlayer(python_path=setup.python_path)
@@ -25,6 +30,9 @@ flask_thread = threading.Thread(
     daemon=True
 )
 flask_thread.start()
+
+
+### Functions ###
 
 def ShowTargetImage(trial, round_setup):
     winA.flip(clearBuffer=True)
@@ -59,18 +67,35 @@ def waitOrButtons(wait_time=600, buttons=["return"], reset_button_server=True):
         buttonInfo.last_pressed = None
 
     print(f"Press {buttons} to continue or wait for {wait_time} seconds")
+
     while buttonTime.getTime() < wait_time:
-        keys = kb.getKeys()
         if buttonInfo.last_pressed != None and buttonInfo.last_pressed in buttons:
             print(f"Button pressed {buttonInfo.last_pressed}, resetting buttonInfo")
             button = buttonInfo.last_pressed
             buttonInfo.last_pressed = None
+            
+            timestamp = button_timer.getTime()
+            button_writer.writerow([timestamp, button])
+            button_press_log.flush()
+
             return button
         else:
             for button in buttons:
                 if button in keys:
                     print(f"Button pressed {button}")
                     return button
+        # --- Keyboard keys ---
+        keys = kb.getKeys()
+        for key in keys:
+            if key.name in buttons:
+                print(f"Button pressed {key.name}")
+
+                # log press
+                timestamp = button_timer.getTime()
+                button_writer.writerow([timestamp, key.name])
+                button_press_log.flush()
+
+                return key.name
         core.wait(0.01)
     print("WaitOrButton time is up.")
 
@@ -180,7 +205,11 @@ while True:
         break
     core.wait(0.01)
 
-# create output file for button presses 
+# start a timer for the button press timestamps
+button_timer = core.Clock()
+
+
+# create output file for trial results  
 output_file = os.path.join(setup.output_folder, f"hh_dyad_{dyad_number}_round_{round_number}") # change to nh later, there is surely a smoother way but that's it for now
 # Check if the file already exists
 if os.path.exists(output_file + ".csv"):
@@ -188,10 +217,24 @@ if os.path.exists(output_file + ".csv"):
         "Warning", f"The file '{output_file}.csv' already exists. Quiting the program..."
     )
 
+
 # define column headers
 headers = ["round_number", "dyad_number", "trial_number", "target_img", "selected_img","accuracy", "reaction_time", "noise_type"]
 os.makedirs(setup.output_folder, exist_ok=True)
-csv_writer = csvManager.CSVWriter(output_file + ".csv", headers)
+trial_writer = csvManager.CSVWriter(output_file + ".csv", headers)
+
+# create output file with button press timestamps
+button_timing_path = output_file + "_button_presses.csv"
+# check if it already exists
+if os.path.exists(button_timing_path):
+    popUp.show_warning_then_exit(
+        "Warning", f"The file '{button_timing_path}' already exists. Quitting the program..."
+    )
+
+# create and open csv file
+button_press_log = open(button_timing_path, "w", newline="")
+button_writer = csv.writer(button_press_log)
+button_writer.writerow(["timestamp", "button"])  # Write header
 
 # Add social or nonsocial noise
 noise_text = "Noise: "
@@ -256,6 +299,20 @@ waitOrButtons(5)
 # Load in the round config
 round_setup = rs.RoundSetup(round_number)
 
+iphone_ips = ["192.168.1.2", "192.168.1.3"]  # Replace with actual IPs
+llf_args = {
+    'llf_port': 12345,
+    'receive_csv_port': 23456,
+    'receive_video_port': 34567,
+    'llf_save_path_csv': "./csv",
+    'llf_save_path_video': "./video",
+    'endpoint': "https://signcollect.nl/razerUpload/upload.php"
+}
+gloss = "trial"
+
+llf_server = LiveLinkFaceServer(gloss, llf_args, iphone_ips)
+
+
 # create instruction text 
 visual.TextStim(winA,text=round_setup.instr, height=30).draw()
 visual.TextStim(winB,text=round_setup.instr, height=30).draw()
@@ -311,6 +368,11 @@ async def go_trial():
     trial_timer = core.Clock()
 
     print("Playing trials")
+
+    # Start LLF recording for the round
+    for client in llf_server.clients.values():
+        client.start_capture()
+   
     if not setup.no_obs:
         setup.obs.send_name_obs("dyad_" + dyad_number + "_round_" + round_number)
         setup.obs.send_start_record_obs()
@@ -396,19 +458,24 @@ async def go_trial():
         # Write test data
         selected_image = images[setup.allowed_keys[button_pressed]]
         print(f"[Trial] Writing data to file:\tcorrect:{trial[trial['target_image']]==selected_image}\ttrialtarget_image:{trial[trial['target_image']]}\tselected_image:{selected_image}")
-        csv_writer.write_row([("round_number", round_number), ("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial[trial['target_image']]), ("selected_img", selected_image), ("accuracy", trial[trial['target_image']]==selected_image), ("reaction_time", rt), ("noise_type", selected_noise)])
+        trial_writer.write_row([("round_number", round_number), ("dyad_number",dyad_number), ("trial_number", trial_number), ("target_img", trial[trial['target_image']]), ("selected_img", selected_image), ("accuracy", trial[trial['target_image']]==selected_image), ("reaction_time", rt), ("noise_type", selected_noise)])
 
         roleSwitch(round_setup, amount_of_rounds, trial_number)
         if trial_timer.getTime() >= 600:
             print("Time is up, ending the round")
             break
     
+    # End LLF recording for the round
+    for client in llf_server.clients.values():
+        client.stop_capture()
+
     # End the round
     setup.audio_player.stop()
     if not setup.no_obs:
         setup.obs.send_stop_record_obs()
         # await setup.obs.send_stop_record_obs()
         # await setup.obs.send_request_file_obs()
+
 
 # Iterate through each trial in the Excel sheet
 try:
@@ -435,6 +502,10 @@ except KeyboardInterrupt:
 # Close windows
 winA.close()
 winB.close()
+
+# close button press log
+button_press_log.close()
+trial_writer.close()
 
 # Exit experiment
 core.quit()
