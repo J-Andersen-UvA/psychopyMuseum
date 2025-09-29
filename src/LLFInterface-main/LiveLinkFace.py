@@ -179,6 +179,24 @@ class LiveLinkFaceClient:
         """
         self.send_message_to_iphone("/BatteryQuery", [])
 
+    def video_display_on(self, *args):
+        """
+        Notify the iPhone server that the video display is on.
+
+        Description:
+        This method sends a message to the iPhone server to indicate that the video display is on.
+        """
+        self.send_message_to_iphone("/VideoDisplayOn", [])
+    
+    def video_display_off(self, *args):
+        """
+        Notify the iPhone server that the video display is off.
+
+        Description:
+        This method sends a message to the iPhone server to indicate that the video display is off.
+        """
+        self.send_message_to_iphone("/VideoDisplayOff", [])
+
     def save_file(self, command, timecode, blendshapeCSV, referenceMOV, *args):
         """
         Save a file on the iPhone server.
@@ -315,6 +333,16 @@ class LiveLinkFaceServer:
         if iphone_ip in self.clients:
             self.clients[iphone_ip].phone_handshake = True
             print(f"[LLF] Target confirmed by iPhone {iphone_ip}")
+
+    def video_display_on(self, addr, iphone_ip, *args):
+        if iphone_ip in self.clients:
+            print(f"[LLF] Video display on confirmed by iPhone {iphone_ip}")
+            self.clients[iphone_ip].video_display_on()
+
+    def video_display_off(self, addr, iphone_ip, *args):
+        if iphone_ip in self.clients:
+            print(f"[LLF] Video display off confirmed by iPhone {iphone_ip}")
+            self.clients[iphone_ip].video_display_off()
 
     # -------------------
     # Utilities
