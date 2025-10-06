@@ -13,7 +13,7 @@ import asyncio
 import threading
 import buttonwebsite.buttonServer as bs
 from LiveLinkFace import LiveLinkFaceServer
-
+from helpers import screenNameShower as screenName
 
 setup = gs.ExperimentSetup()
 # from sound_player import SoundPlayer
@@ -43,6 +43,7 @@ def ShowTargetImage(trial, round_setup):
     img_name = trial[target_stim]  # This will get the image file name from the corresponding column (stim1, stim2, etc.)
     target_img_path = os.path.join(round_setup.img_folder, img_name)
     imageShower.show_image(target_img_path, winA, pos=(1,23), size=(485,485), flip=False)
+    screenName.show_screen_name(winA, "A", flip=False)
 
 # def waitOrButtons(wait_time=600, buttons=["return"]):
 #     """
@@ -124,8 +125,10 @@ def roleSwitch(round_setup, max, cur):
         print("Dit is het einde van deze ronde")
         role_switched = True  # Ensure roles are only switched once
         visual.TextStim(winA, text=round_setup.switch, color="white", height=40).draw()
+        screenName.show_screen_name(winA, "A", flip=False)
         winA.flip()
         visual.TextStim(winB, text=round_setup.switch, color="white", height=40).draw()
+        screenName.show_screen_name(winB, "B", flip=False)
         winB.flip()
         winA, winB = winB, winA
         waitOrButtons()
@@ -135,13 +138,15 @@ dyad_nr_text = "Dyad: "
 dyad_number = ""
 
 # display text
-dyad_nr_stim = visual.TextStim(winA, text=dyad_nr_text, 
+screenName.show_screen_name(winA, "A", flip=False)
+dyad_nr_stim_a = visual.TextStim(winA, text=dyad_nr_text, 
                                color="#F5F5DC", 
                                colorSpace='hex', 
                                height=40, pos=(0, 0), 
                                wrapWidth=450)
 
-dyad_nr_stim = visual.TextStim(winB, text=dyad_nr_text, 
+screenName.show_screen_name(winB, "B", flip=False)
+dyad_nr_stim_b = visual.TextStim(winB, text=dyad_nr_text, 
                                color="#F5F5DC", 
                                colorSpace='hex', 
                                height=40, pos=(0, 0), 
@@ -149,8 +154,12 @@ dyad_nr_stim = visual.TextStim(winB, text=dyad_nr_text,
 
 # Wait for type the dyad number 
 while True:
-    dyad_nr_stim.text = dyad_nr_text + dyad_number
-    dyad_nr_stim.draw()
+    dyad_nr_stim_a.text = dyad_nr_text + dyad_number
+    dyad_nr_stim_a.draw()
+    dyad_nr_stim_b.text = dyad_nr_text + dyad_number
+    dyad_nr_stim_b.draw()
+    screenName.show_screen_name(winA, "A", flip=False)
+    screenName.show_screen_name(winB, "B", flip=False)
     winA.flip()
     winB.flip()
 
@@ -172,23 +181,29 @@ round_nr_text = "Round: "
 round_number = ""
 
 #display text
-round_nr_stim = visual.TextStim(winA, text=round_nr_text, 
+round_nr_stim_a = visual.TextStim(winA, text=round_nr_text, 
                                color="#F5F5DC", 
                                colorSpace='hex', 
                                height=40, pos=(0, 0), 
                                wrapWidth=450)
+screenName.show_screen_name(winA, "A", flip=False)
 
-round_nr_stim = visual.TextStim(winB, text=round_nr_text, 
+round_nr_stim_b = visual.TextStim(winB, text=round_nr_text, 
                                color="#F5F5DC", 
                                colorSpace='hex', 
                                height=40, pos=(0, 0), 
                                wrapWidth=450)
+screenName.show_screen_name(winB, "B", flip=False)
 
 
 # Wait for type the round number 
 while True:
-    round_nr_stim.text = round_nr_text + round_number
-    round_nr_stim.draw()
+    round_nr_stim_a.text = round_nr_text + round_number
+    round_nr_stim_a.draw()
+    round_nr_stim_b.text = round_nr_text + round_number
+    round_nr_stim_b.draw()
+    screenName.show_screen_name(winA, "A", flip=False)
+    screenName.show_screen_name(winB, "B", flip=False)
     winA.flip()
     winB.flip()
 
@@ -241,23 +256,29 @@ noise_text = "Noise: "
 selected_noise = ""
 
 #display noise text
-noise_stim = visual.TextStim(winA, text=noise_text, 
+noise_stim_a = visual.TextStim(winA, text=noise_text, 
                              color="#F5F5DC", 
                              colorSpace='hex', 
                              height=40, pos=(0, 0), 
                              wrapWidth=450)
+screenName.show_screen_name(winA, "A", flip=False)
 
-noise_stim = visual.TextStim(winB, text=noise_text, 
+noise_stim_b = visual.TextStim(winB, text=noise_text, 
                              color="#F5F5DC", 
                              colorSpace='hex', 
                              height=40, pos=(0, 0), 
                              wrapWidth=450)
+screenName.show_screen_name(winB, "B", flip=False)
 
 noise = None
 
 while True:
-    noise_stim.text = noise_text + selected_noise
-    noise_stim.draw()
+    noise_stim_a.text = noise_text + selected_noise
+    noise_stim_a.draw()
+    noise_stim_b.text = noise_text + selected_noise
+    noise_stim_b.draw()
+    screenName.show_screen_name(winA, "A", flip=False)
+    screenName.show_screen_name(winB, "B", flip=False)
     winA.flip()
     winB.flip()
 
@@ -291,7 +312,10 @@ def play_noise():
 
 # create intro text for rounds 
 visual.TextStim(winA, text="Ronde " + str(round_number), color="#F5F5DC", height=40, pos=(0, 0), wrapWidth=450).draw()
+screenName.show_screen_name(winA, "A", flip=False)
 visual.TextStim(winB, text="Ronde " + str(round_number), color="white", height=50).draw()
+screenName.show_screen_name(winB, "B", flip=False)
+
 winA.flip()
 winB.flip()
 waitOrButtons(5)
@@ -315,7 +339,9 @@ llf_server = LiveLinkFaceServer(gloss, llf_args, iphone_ips)
 
 # create instruction text 
 visual.TextStim(winA,text=round_setup.instr, height=30).draw()
+screenName.show_screen_name(winA, "A", flip=False)
 visual.TextStim(winB,text=round_setup.instr, height=30).draw()
+screenName.show_screen_name(winB, "B", flip=False)
 winA.flip()
 winB.flip()
 waitOrButtons(wait_time=60, buttons=list(setup.allowed_keys.keys()))
@@ -333,9 +359,11 @@ if round_setup.prompts:
     for prompt in round_setup.prompts:
         play_noise()
         visual.TextStim(winA, text=prompt, color="white", height=40).draw()
+        screenName.show_screen_name(winA, "A", flip=False)
         visual.TextStim(winB, text=prompt, color="white", height=40).draw()
-        winA.flip()  
-        winB.flip()  
+        screenName.show_screen_name(winB, "B", flip=False)
+        winA.flip()
+        winB.flip()
         waitOrButtons(2)
         waitOrButtons(wait_time=600-round1_timer.getTime(), buttons=list(setup.allowed_keys.keys())) # 10 minutes or button
         setup.audio_player.pause()
@@ -388,6 +416,8 @@ async def go_trial():
         # load text background image
         imageShower.show_image(round_setup.text_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
         imageShower.show_image(round_setup.text_background, winB, pos=(0,-50), size=(1000, 1000), flip=False)
+        screenName.show_screen_name(winA, "A", flip=False)
+        screenName.show_screen_name(winB, "B", flip=False)
 
         # Display the description text
         if 'description_text' in trial:
@@ -408,7 +438,9 @@ async def go_trial():
         # Load img4 as the background
         if not round_setup.show_target:
             imageShower.show_image(round_setup.img4_background, winA, pos=(0,-50), size=(1000, 1000), flip=False)
+            screenName.show_screen_name(winA, "A", flip=False)
         imageShower.show_image(round_setup.img4_background, winB, pos=(0,-50), size=(1000, 1000), flip=False)
+        screenName.show_screen_name(winB, "B", flip=False)
 
         print("[Trial] Loading stim images...")
         # Load and display the 4 images
@@ -427,7 +459,9 @@ async def go_trial():
         # show shuffled images
         if not round_setup.show_target:
             imageShower.show_multiple_images(path_images, winA, positions, size, show_tags=True, flip=False)
+            screenName.show_screen_name(winA, "A", flip=False)
         imageShower.show_multiple_images(path_images, winB, positions, size, show_tags=True, flip=False)
+        screenName.show_screen_name(winB, "B", flip=False)
 
         if round_setup.show_target:
             print("[Trial] Showing target image...")
