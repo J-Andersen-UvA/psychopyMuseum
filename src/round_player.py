@@ -12,8 +12,6 @@ import setup.round_setup as rs
 import asyncio
 import threading
 import buttonwebsite.buttonServer as bs
-from LiveLinkFace import LiveLinkFaceServer
-
 
 setup = gs.ExperimentSetup()
 # from sound_player import SoundPlayer
@@ -67,35 +65,20 @@ def waitOrButtons(wait_time=600, buttons=["return"], reset_button_server=True):
         buttonInfo.last_pressed = None
 
     print(f"Press {buttons} to continue or wait for {wait_time} seconds")
-
     while buttonTime.getTime() < wait_time:
+        keys = kb.getKeys()
         if buttonInfo.last_pressed != None and buttonInfo.last_pressed in buttons:
             print(f"Button pressed {buttonInfo.last_pressed}, resetting buttonInfo")
+            setup.pling_player.play(setup.pling, setup.pling_volume)
             button = buttonInfo.last_pressed
             buttonInfo.last_pressed = None
-            
-            timestamp = button_timer.getTime()
-            button_writer.writerow([timestamp, button])
-            button_press_log.flush()
-
             return button
         else:
             for button in buttons:
                 if button in keys:
+                    setup.pling_player.play(setup.pling, setup.pling_volume)
                     print(f"Button pressed {button}")
                     return button
-        # --- Keyboard keys ---
-        keys = kb.getKeys()
-        for key in keys:
-            if key.name in buttons:
-                print(f"Button pressed {key.name}")
-
-                # log press
-                timestamp = button_timer.getTime()
-                button_writer.writerow([timestamp, key.name])
-                button_press_log.flush()
-
-                return key.name
         core.wait(0.01)
     print("WaitOrButton time is up.")
 
@@ -299,20 +282,6 @@ waitOrButtons(5)
 # Load in the round config
 round_setup = rs.RoundSetup(round_number)
 
-iphone_ips = ["192.168.1.2", "192.168.1.3"]  # Replace with actual IPs
-llf_args = {
-    'llf_port': 12345,
-    'receive_csv_port': 23456,
-    'receive_video_port': 34567,
-    'llf_save_path_csv': "./csv",
-    'llf_save_path_video': "./video",
-    'endpoint': "https://signcollect.nl/razerUpload/upload.php"
-}
-gloss = "trial"
-
-llf_server = LiveLinkFaceServer(gloss, llf_args, iphone_ips)
-
-
 # create instruction text 
 visual.TextStim(winA,text=round_setup.instr, height=30).draw()
 visual.TextStim(winB,text=round_setup.instr, height=30).draw()
@@ -326,10 +295,18 @@ main_timer = core.Clock()
 # play prompts (only for for round 1)
 if round_setup.prompts:
     round1_timer = core.Clock()
+
+    dyad_name = "dyad_" + dyad_number + "_round_" + round_number
+    # Setup OBS
     if not setup.no_obs:
-        setup.obs.send_name_obs("dyad_" + dyad_number + "_round_" + round_number)
+        setup.obs.send_name_obs(dyad_name)
         setup.obs.send_start_record_obs()
         # asyncio.run(setup.obs.send_start_record_obs())
+
+    # Setup LLF
+    setup.LLFIphoneCons.set_file_names_iphones(dyad_name)
+    setup.LLFIphoneCons.start_both_iphones()
+
     for prompt in round_setup.prompts:
         play_noise()
         visual.TextStim(winA, text=prompt, color="white", height=40).draw()
@@ -346,6 +323,7 @@ if round_setup.prompts:
         # asyncio.run(setup.obs.send_stop_record_obs())
         # asyncio.run(setup.obs.send_request_file_obs())
     
+    setup.LLFIphoneCons.stop_both_iphones()
     
 
 #  # load background image
@@ -369,15 +347,15 @@ async def go_trial():
 
     print("Playing trials")
 
-    # Start LLF recording for the round
-    for client in llf_server.clients.values():
-        client.start_capture()
-   
+    dyad_name = "dyad_" + dyad_number + "_round_" + round_number
     if not setup.no_obs:
-        setup.obs.send_name_obs("dyad_" + dyad_number + "_round_" + round_number)
+        setup.obs.send_name_obs(dyad_name)
         setup.obs.send_start_record_obs()
         # await setup.obs.send_name_obs("dyad_" + dyad_number + "_round_" + round_number)
         # await setup.obs.send_start_record_obs()
+
+    setup.LLFIphoneCons.set_file_names_iphones(dyad_name)
+    setup.LLFIphoneCons.start_both_iphones()
 
     amount_of_rounds = len(round_setup.stims)
 
@@ -465,16 +443,14 @@ async def go_trial():
             print("Time is up, ending the round")
             break
     
-    # End LLF recording for the round
-    for client in llf_server.clients.values():
-        client.stop_capture()
-
     # End the round
     setup.audio_player.stop()
     if not setup.no_obs:
         setup.obs.send_stop_record_obs()
         # await setup.obs.send_stop_record_obs()
         # await setup.obs.send_request_file_obs()
+    
+    setup.LLFIphoneCons.stop_both_iphones()
 
 
 # Iterate through each trial in the Excel sheet
@@ -491,6 +467,7 @@ except Exception as e:
         setup.obs.send_stop_record_obs()
         # asyncio.run(setup.obs.send_stop_record_obs())
         # asyncio.run(setup.obs.send_request_file_obs())
+    setup.LLFIphoneCons.stop_both_iphones()
 except KeyboardInterrupt:
     setup.audio_player.stop()
     # sound_player.stop()
@@ -498,14 +475,14 @@ except KeyboardInterrupt:
         setup.obs.send_stop_record_obs()
         # asyncio.run(setup.obs.send_stop_record_obs())
         # asyncio.run(setup.obs.send_request_file_obs())
-
+    setup.LLFIphoneCons.stop_both_iphones()
 # Close windows
 winA.close()
 winB.close()
 
 # close button press log
 button_press_log.close()
-trial_writer.close()
+# trial_writer.close()
 
 # Exit experiment
 core.quit()
